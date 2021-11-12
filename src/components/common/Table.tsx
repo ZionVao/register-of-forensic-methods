@@ -22,6 +22,7 @@ import {
 } from '../../store/store';
 import { loadMetods } from '../../store/metod/slice';
 import { fetchMetodsData } from '../../store/metod/actions';
+import { getDateStr } from '../../helpers/date/dayjs/dayjs';
 
 interface Column {
   id:
@@ -39,30 +40,51 @@ interface Column {
   label: string;
   minWidth?: number;
   align?: 'right';
-  format?: (value: any) => string;
+  format?: (value: any) => any;
 }
 
 const columns: Column[] = [
-  { id: 'number', label: '№', minWidth: 20 },
-  { id: 'code', label: 'Реєстраційний код' },
+  { id: 'number', label: '№', minWidth: 10, format: String },
+  { id: 'code', label: 'Реєстраційний код', minWidth: 10 },
   {
     id: 'type',
     label: 'Вид експертизи',
-    format: (value: [string, string]) => `${value[0]} - ${value[1]}`,
+    format: (value: [string, string]) => (
+      <>
+        <b>{value[0]}</b>
+        <br />
+        {value[1]}
+      </>
+    ),
+    minWidth: 90,
   },
-  { id: 'name', label: 'Назва методики' },
+  { id: 'name', label: 'Назва методики', minWidth: 90 },
   { id: 'developer', label: 'Найменування розробника' },
-  { id: 'created', label: 'Рік створення методики' },
-  { id: 'updated', label: 'Рік внесення змін до методики' },
-  { id: 'stoped', label: 'Рік припинення застосування методики' },
-  { id: 'registered', label: 'Дата прийняття рішення про державну реєстрацію' },
+  { id: 'created', label: 'Рік створення методики', format: String },
+  {
+    id: 'updated',
+    label: 'Рік внесення змін до методики',
+    format: (value: number | null) => (value ? String(value) : '---'),
+  },
+  {
+    id: 'stoped',
+    label: 'Рік припинення застосування методики',
+    format: (value: number | null) => (value ? String(value) : '---'),
+  },
+  {
+    id: 'registered',
+    label: 'Дата прийняття рішення про державну реєстрацію',
+    format: getDateStr,
+  },
   {
     id: 'registered_changes',
     label: 'Дата прийняття рішення про державну реєстрацію змін до методики',
+    format: (value: Date | null) => (value ? getDateStr(value) : '---'),
   },
   {
     id: 'stop_date',
     label: 'Дата прийняття рішення про припинення застосування методики',
+    format: (value: Date | null) => (value ? getDateStr(value) : '---'),
   },
 ];
 
@@ -113,9 +135,9 @@ export default function ColumnGroupingTable() {
 
   const dispatch = useTypedDispatch();
 
-  // React.useEffect(() => {
-  //   dispatch(fetchMetodsData(metodsFilter));
-  // }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(fetchMetodsData(metodsFilter));
+  }, [dispatch]);
 
   const handleMetodsLoad = (filtersPayload: Filter) => {
     dispatch(fetchMetodsData(filtersPayload));
