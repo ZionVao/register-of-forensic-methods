@@ -1,9 +1,13 @@
+import { UserDTO } from '../../common/dtos/user/UserDTO';
+
 export interface IAuthService {
-  login(payload: { email: string; password: string }): any;
+  login(payload: {
+    email: string;
+    password: string;
+  }): Promise<{ token: string; user: UserDTO }>;
   registration(payload: {
     email: string;
     password: string;
     username: string;
-  }): any;
-  getCurrentUser(): any;
+  }): Promise<{ token: string; user: UserDTO }>;
 }

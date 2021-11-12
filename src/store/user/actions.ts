@@ -1,52 +1,54 @@
-import { createAction, Dispatch } from '@reduxjs/toolkit';
+import { Dispatch } from '@reduxjs/toolkit';
 import { StorageKey } from '../../common/enum/enums';
 import {
   storage as storageService,
   auth as authService,
 } from '../../services/services';
-import { UserDTO } from '../../common/dtos/user/UserDTO';
-
-const ActionType = {
-  SET_USER: 'profile/set-user',
-};
-
-const setUser = createAction(ActionType.SET_USER, (user: UserDTO | null) => ({
-  payload: {
-    user,
-  },
-}));
+import { userActions } from './slice';
+import { uiActions } from '../ui/slice';
 
 const login =
-  (request: { email: string; password: string }) =>
-  async (dispatch: Dispatch) => {
-    const { user, token } = await authService.login(request);
-
-    storageService.setItem(StorageKey.TOKEN, token);
-    dispatch(setUser(user));
+  (request: { email: string; password: string }) => (dispatch: Dispatch) => {
+    authService
+      .login(request)
+      .then((res) => {
+        storageService.setItem(StorageKey.TOKEN, res.token);
+        dispatch(userActions.setUser({ user: res.user }));
+      })
+      .catch(() => {
+        dispatch(
+          uiActions.showNotification({
+            status: 'error',
+            title: 'Error!',
+            message: 'Failed Login!',
+          }),
+        );
+      });
   };
 
 const register =
   (request: { email: string; password: string; username: string }) =>
-  async (dispatch: Dispatch) => {
-    const { user, token } = await authService.registration(request);
-
-    storageService.setItem(StorageKey.TOKEN, token);
-    dispatch(setUser(user));
+  (dispatch: Dispatch) => {
+    authService
+      .registration(request)
+      .then((res) => {
+        storageService.setItem(StorageKey.TOKEN, res.token);
+        dispatch(userActions.setUser({ user: res.user }));
+      })
+      .catch(() => {
+        dispatch(
+          uiActions.showNotification({
+            status: 'error',
+            title: 'Error!',
+            message: 'Failed Register!',
+          }),
+        );
+      });
   };
 
 const logout = () => (dispatch: Dispatch) => {
   storageService.removeItem(StorageKey.TOKEN);
-  dispatch(setUser(null));
+  dispatch(userActions.setUser({ user: null }));
 };
 
-const loadCurrentUser = () => async (dispatch: Dispatch) => {
-  try {
-    const user = await authService.getCurrentUser();
-
-    dispatch(setUser(user));
-  } catch (err) {
-    logout()(dispatch);
-  }
-};
-
-export { setUser, login, register, logout, loadCurrentUser };
+export { login, register, logout };
