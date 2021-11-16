@@ -2,35 +2,36 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 interface UiState {
-  showCart: boolean;
   notification: NotificationInterface | null;
+  currentPage: number;
 }
 
 export interface NotificationInterface {
-  status: string;
+  status: 'success' | 'info' | 'warning' | 'error';
   title: string;
   message: string;
 }
 
 const initialState: UiState = {
-  showCart: true,
   notification: null,
+  currentPage: 1,
 };
 
 const uiSlice = createSlice({
   name: 'ui',
   initialState: initialState,
   reducers: {
-    toggle: (state) => {
-      state.showCart = !state.showCart;
-    },
     showNotification: (state, action: PayloadAction<NotificationInterface>) => {
       state.notification = action.payload;
+    },
+    clearNotification: (state, action: PayloadAction<void>) => {
+      console.log('act');
+
+      state.notification = null;
     },
   },
 });
 
-export const selectShowCart = (state: RootState) => state.ui.showCart;
 export const selectNotification = (state: RootState) => state.ui.notification;
 
 export const uiActions = uiSlice.actions;

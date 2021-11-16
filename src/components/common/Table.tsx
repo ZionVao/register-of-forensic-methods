@@ -156,8 +156,6 @@ export default function ColumnGroupingTable() {
     setPage(newPage);
   };
 
-  console.log(metods);
-
   return (
     <Paper sx={{ width: '100%' }}>
       <TableContainer>

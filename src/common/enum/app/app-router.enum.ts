@@ -3,7 +3,10 @@ const AppRoute = {
   ANY: '*',
   LOGIN: '/login',
   REGISTRATION: '/registration',
-  PROFILE: '/profile',
+  USER: '/user',
+  SEARCH: '/search',
+  REGISTRY: 'registry',
+  TRANSACTIONS: '/transactions',
   SHARE_$POSTHASH: '/share/:postHash',
 };
 

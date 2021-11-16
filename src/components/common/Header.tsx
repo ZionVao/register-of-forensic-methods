@@ -38,8 +38,8 @@ export default function Header() {
           >
             {headerInfo.subheader}
           </Typography>
+          <Menu />
         </CardContent>
-        <Menu />
       </Box>
     </Card>
   );

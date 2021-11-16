@@ -1,3 +1,4 @@
+import { UserCreateDTO } from '../../common/dtos/user/UserCreateDTO';
 import { UserDTO } from '../../common/dtos/user/UserDTO';
 import { HttpMethod, ContentType } from '../../common/enum/enums';
 import { IHttpService } from '../http/IHttpServise';
@@ -23,11 +24,9 @@ class Auth implements IAuthService {
     return { token: res.token, user: UserMapper.toDTO(res.user) };
   }
 
-  async registration(payload: {
-    email: string;
-    password: string;
-    username: string;
-  }): Promise<{ token: string; user: UserDTO }> {
+  async registration(
+    payload: UserCreateDTO,
+  ): Promise<{ token: string; user: UserDTO }> {
     const res = await this._http.load('/api/auth/register', {
       method: HttpMethod.POST,
       contentType: ContentType.JSON,

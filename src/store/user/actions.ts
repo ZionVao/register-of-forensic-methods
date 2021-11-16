@@ -6,6 +6,7 @@ import {
 } from '../../services/services';
 import { userActions } from './slice';
 import { uiActions } from '../ui/slice';
+import { UserCreateDTO } from '../../common/dtos/user/UserCreateDTO';
 
 const login =
   (request: { email: string; password: string }) => (dispatch: Dispatch) => {
@@ -13,7 +14,7 @@ const login =
       .login(request)
       .then((res) => {
         storageService.setItem(StorageKey.TOKEN, res.token);
-        dispatch(userActions.setUser({ user: res.user }));
+        dispatch(userActions.setUser({ user: res.user, role: 'registrator' }));
       })
       .catch(() => {
         dispatch(
@@ -26,29 +27,27 @@ const login =
       });
   };
 
-const register =
-  (request: { email: string; password: string; username: string }) =>
-  (dispatch: Dispatch) => {
-    authService
-      .registration(request)
-      .then((res) => {
-        storageService.setItem(StorageKey.TOKEN, res.token);
-        dispatch(userActions.setUser({ user: res.user }));
-      })
-      .catch(() => {
-        dispatch(
-          uiActions.showNotification({
-            status: 'error',
-            title: 'Error!',
-            message: 'Failed Register!',
-          }),
-        );
-      });
-  };
+const register = (request: UserCreateDTO) => (dispatch: Dispatch) => {
+  authService
+    .registration(request)
+    .then((res) => {
+      storageService.setItem(StorageKey.TOKEN, res.token);
+      dispatch(userActions.setUser({ user: res.user, role: 'registrator' }));
+    })
+    .catch(() => {
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Failed Register!',
+        }),
+      );
+    });
+};
 
 const logout = () => (dispatch: Dispatch) => {
   storageService.removeItem(StorageKey.TOKEN);
-  dispatch(userActions.setUser({ user: null }));
+  dispatch(userActions.setUser({ user: null, role: 'user' }));
 };
 
 export { login, register, logout };

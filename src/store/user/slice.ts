@@ -4,14 +4,17 @@ import { RootState } from '../store';
 
 interface UserContent {
   user: UserDTO | null;
+  role: 'user' | 'registrator' | 'admin';
 }
 
 interface UserState {
   user: UserDTO | null;
+  role: 'user' | 'registrator' | 'admin';
 }
 
 const initialState: UserState = {
   user: null,
+  role: 'user',
 };
 
 const userSlice = createSlice({
@@ -20,6 +23,7 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<UserContent>) => {
       state.user = action.payload.user;
+      state.role = action.payload.role;
     },
   },
 });
