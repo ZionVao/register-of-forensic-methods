@@ -1,13 +1,12 @@
-const AppRoute = {
+export const AppRoute = {
   ROOT: '/',
   ANY: '*',
   LOGIN: '/login',
-  REGISTRATION: '/registration',
+
+  METHOD: '/method',
+  REGISTRY: '/registry',
+  TRANSACTION: '/transaction',
+
   USER: '/user',
   SEARCH: '/search',
-  REGISTRY: 'registry',
-  TRANSACTIONS: '/transactions',
-  SHARE_$POSTHASH: '/share/:postHash',
 };
-
-export { AppRoute };

@@ -13,8 +13,14 @@ const login =
     authService
       .login(request)
       .then((res) => {
+        console.log(res);
+
         storageService.setItem(StorageKey.TOKEN, res.token);
-        dispatch(userActions.setUser({ user: res.user, role: 'registrator' }));
+        //decrypt token
+        const u = { role: 1, id: 1 };
+
+        const role = u.role === 1 ? 'registrator' : 'admin';
+        dispatch(userActions.setUser({ user: res.user, role: role }));
       })
       .catch(() => {
         dispatch(

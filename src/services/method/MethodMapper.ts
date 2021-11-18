@@ -1,7 +1,7 @@
-import { MetodDTO } from '../../common/dtos/metod/MetodDTO';
+import { MethodDTO } from '../../common/dtos/method/MethodDTO';
 
 export class MetodMapper {
-  public static toDTO(value: { [x: string | number]: any }): MetodDTO {
+  public static toDTO(value: { [x: string | number]: any }): MethodDTO {
     return {
       id: value.id,
       registration_code: value.registration_code,

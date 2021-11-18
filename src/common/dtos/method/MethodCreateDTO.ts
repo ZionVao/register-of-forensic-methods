@@ -1,14 +1,9 @@
-import { DomainDTO } from '../domain/DomainDTO';
-
-export interface MetodDTO {
-  id: number;
+export interface MethodCreateDTO {
   registration_code: string;
   name: string;
 
   id_domaims: number;
-  domainsOfMethod: DomainDTO;
-
-  author: string;
+  id_types: number;
 
   year_creation: number;
   year_making_changes: number | null;
@@ -20,7 +15,9 @@ export interface MetodDTO {
 
   doc_copy_of_method: string;
   doc_report_review: string;
+
   doc_certificate_of_approbation: string;
   doc_copy_of_implementation: string;
+
   doc_discount_card: string;
 }

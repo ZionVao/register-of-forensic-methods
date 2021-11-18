@@ -14,14 +14,26 @@ class Auth implements IAuthService {
   async login(payload: {
     email: string;
     password: string;
-  }): Promise<{ token: string; user: UserDTO }> {
-    const res = await this._http.load('/api/auth/login', {
+  }): Promise<{ token: string; user: UserDTO | null }> {
+    const res = await this._http.load('/main/login', {
       method: HttpMethod.POST,
       contentType: ContentType.JSON,
       hasAuth: false,
       payload: JSON.stringify(payload),
     });
-    return { token: res.token, user: UserMapper.toDTO(res.user) };
+    console.log(res);
+
+    const u = await this._http.load('/main/user', {
+      method: HttpMethod.POST,
+      contentType: ContentType.JSON,
+      hasAuth: false,
+      payload: JSON.stringify(payload),
+    });
+    console.log(u);
+
+    // UserMapper.toDTO(res.user)
+
+    return { token: res.Token, user: null };
   }
 
   async registration(

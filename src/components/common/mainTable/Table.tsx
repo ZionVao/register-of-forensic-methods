@@ -7,22 +7,16 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   Pagination,
-  PaginationItem,
 } from '@mui/material';
-import { Link, MemoryRouter, Route } from 'react-router-dom';
-import { MetodDTO } from '../../common/dtos/metod/MetodDTO';
-import { Filter } from '../../services/metod/metod.service';
-import {
-  RootState,
-  useTypedDispatch,
-  useTypedSelector,
-} from '../../store/store';
-import { loadMetods } from '../../store/metod/slice';
-import { fetchMetodsData } from '../../store/metod/actions';
-import { getDateStr } from '../../helpers/date/dayjs/dayjs';
+import { MethodDTO } from '../../../common/dtos/method/MethodDTO';
+import { useTypedDispatch, useTypedSelector } from '../../../store/store';
+import { loadMethods } from '../../../store/method/slice';
+import { fetchMethodsData } from '../../../store/method/actions';
+import { getDateStr } from '../../../helpers/date/dayjs/dayjs';
+import { getUser } from '../../../store/user/slice';
+import { Filter } from '../../../services/interfaces/interfaces';
 
 interface Column {
   id:
@@ -36,7 +30,9 @@ interface Column {
     | 'stoped'
     | 'registered'
     | 'registered_changes'
-    | 'stop_date';
+    | 'stop_date'
+    | 'docs'
+    | 'change_row';
   label: string;
   minWidth?: number;
   align?: 'right';
@@ -88,6 +84,29 @@ const columns: Column[] = [
   },
 ];
 
+const privateColumns: Column[] = [
+  {
+    id: 'docs',
+    label: 'Вкладені документи',
+    format: (value: [string | null, string | null, string | null]) => (
+      <>
+        <b>{value[0]}</b>
+        <br />
+        {value[1]}
+      </>
+    ),
+  },
+  {
+    id: 'change_row',
+    label: 'Внести зміни',
+    format: (value: string) => (
+      <>
+        <b>{value}</b>
+      </>
+    ),
+  },
+];
+
 interface Data {
   number: number;
   code: string;
@@ -100,60 +119,52 @@ interface Data {
   registered: Date;
   registered_changes: Date | null;
   stop_date: Date | null;
+  docs?: [string | null, string | null, string | null];
+  change_row?: string;
 }
 
-function createData(metod: MetodDTO, index: number): Data {
+function createData(method: MethodDTO, index: number): Data {
   return {
     number: index,
-    code: metod.registration_code,
+    code: method.registration_code,
     type: [
-      metod.domainsOfMethod.typesOfMethods.name,
-      metod.domainsOfMethod.name,
+      method.domainsOfMethod.typesOfMethods.name,
+      method.domainsOfMethod.name,
     ],
-    name: metod.name,
-    developer: metod.author,
-    created: metod.year_creation,
-    updated: metod.year_making_changes,
-    stoped: metod.year_termination_application,
-    registered: metod.date_of_decision_on_state_registration,
-    registered_changes: metod.date_of_decision_on_state_registration_of_changes,
-    stop_date: metod.date_of_decision_to_terminate_the_application,
+    name: method.name,
+    developer: method.author,
+    created: method.year_creation,
+    updated: method.year_making_changes,
+    stoped: method.year_termination_application,
+    registered: method.date_of_decision_on_state_registration,
+    registered_changes:
+      method.date_of_decision_on_state_registration_of_changes,
+    stop_date: method.date_of_decision_to_terminate_the_application,
   };
 }
 
-const metodsFilter: Filter = {
+const methodsFilter: Filter = {
   userId: undefined,
-  from: 0,
+  page: 0,
   count: 10,
 };
 
-export default function ColumnGroupingTable() {
-  const metods = useTypedSelector(loadMetods);
+export default function MainTable() {
+  const methods = useTypedSelector(loadMethods);
+  const user = useTypedSelector(getUser);
 
-  const [page, setPage] = React.useState(1);
-  const [pagesCount, setPagesCount] = React.useState(1);
-
+  if (user.role === 'registrator') {
+    // columns.push()
+  }
   const dispatch = useTypedDispatch();
 
   React.useEffect(() => {
-    dispatch(fetchMetodsData(metodsFilter));
+    dispatch(fetchMethodsData(methodsFilter));
   }, [dispatch]);
 
-  const handleMetodsLoad = (filtersPayload: Filter) => {
-    dispatch(fetchMetodsData(filtersPayload));
-  };
-
-  // handleMetodsLoad(metodsFilter);
-
-  // const toggleShowMetods = () => {
-  //   // metodsFilter.userId = showOwnPosts ? undefined : userId;
-  //   metodsFilter.from = 0;
-  //   handleMetodsLoad(metodsFilter);
-  //   metodsFilter.from = metodsFilter.count; // for the next scroll
-  // };
-
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    methodsFilter.page = newPage;
+    dispatch(fetchMethodsData(methodsFilter));
   };
 
   return (
@@ -174,8 +185,8 @@ export default function ColumnGroupingTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {metods.metods.map((metod, index) => {
-              const row = createData(metod, index + 1);
+            {methods.methods.map((method, index) => {
+              const row = createData(method, index + 1);
               return (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                   {columns.map((column) => {
@@ -195,8 +206,8 @@ export default function ColumnGroupingTable() {
         </Table>
       </TableContainer>
       <Pagination
-        page={page}
-        count={pagesCount}
+        page={methods.page}
+        count={methods.totalPages}
         onChange={handleChangePage}
         variant="outlined"
         shape="rounded"

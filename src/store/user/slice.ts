@@ -2,14 +2,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { UserDTO } from '../../common/dtos/user/UserDTO';
 import { RootState } from '../store';
 
+export type UserRole = 'user' | 'registrator' | 'admin';
+
 interface UserContent {
   user: UserDTO | null;
-  role: 'user' | 'registrator' | 'admin';
+  role: UserRole;
 }
 
 interface UserState {
   user: UserDTO | null;
-  role: 'user' | 'registrator' | 'admin';
+  role: UserRole;
 }
 
 const initialState: UserState = {

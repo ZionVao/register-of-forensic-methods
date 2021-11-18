@@ -5,7 +5,7 @@ export interface IAuthService {
   login(payload: {
     email: string;
     password: string;
-  }): Promise<{ token: string; user: UserDTO }>;
+  }): Promise<{ token: string; user: UserDTO | null }>;
   registration(
     payload: UserCreateDTO,
   ): Promise<{ token: string; user: UserDTO }>;

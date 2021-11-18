@@ -14,6 +14,12 @@ import DatePicker from '@mui/lab/DatePicker';
 import * as React from 'react';
 
 export const CreateMethod = () => {
+  // const [email, setEmail] = React.useState('');
+  // const [password, setPassword] = React.useState('');
+  // const [isLoading, setIsLoading] = React.useState(false);
+  // const [isEmailValid, setIsEmailValid] = React.useState(true);
+  // const [isPasswordValid, setIsPasswordValid] = React.useState(true);
+
   const [value, setValue] = React.useState<Date | null>(null);
 
   const fWidth = 500;
@@ -29,7 +35,7 @@ export const CreateMethod = () => {
       >
         <Stack
           direction="column"
-          justifyContent="center"
+          justifyContent="space-evenly"
           alignItems="center"
           spacing={2}
         >
@@ -84,7 +90,7 @@ export const CreateMethod = () => {
         </Stack>
         <Stack
           direction="column"
-          justifyContent="center"
+          justifyContent="space-evenly"
           alignItems="center"
           spacing={2}
         >
@@ -97,12 +103,6 @@ export const CreateMethod = () => {
           <TextField
             id="outlined-basic"
             label="Рік припинення застосування методики"
-            variant="outlined"
-            sx={{ width: fWidth }}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Рік внесення змін до методики"
             variant="outlined"
             sx={{ width: fWidth }}
           />
@@ -119,7 +119,7 @@ export const CreateMethod = () => {
             />
           </LocalizationProvider>
           <InputLabel htmlFor="import-button" sx={{ width: fWidth }}>
-            <Grid container direction="row" justifyContent="space-between">
+            <Grid container direction="column" justifyContent="space-between">
               {'Рецензія на звіт'}
 
               <Input
@@ -133,7 +133,7 @@ export const CreateMethod = () => {
             </Grid>
           </InputLabel>
           <InputLabel htmlFor="import-button" sx={{ width: fWidth }}>
-            <Grid container direction="row" justifyContent="space-between">
+            <Grid container direction="column" justifyContent="space-between">
               {'Рiшення наукової ради щодо впровадження'}
 
               <Input
@@ -147,7 +147,7 @@ export const CreateMethod = () => {
             </Grid>
           </InputLabel>
           <InputLabel htmlFor="import-button" sx={{ width: fWidth }}>
-            <Grid container direction="row" justifyContent="space-between">
+            <Grid container direction="column" justifyContent="space-between">
               {'Облікова карта'}
 
               <Input
