@@ -19,13 +19,21 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import {
-  fetchRegistrarsDate,
+  fetchRegistrarsData,
   fetchUsersRelations,
 } from '../../../store/registrar/actions';
 import { UserFilter } from '../../../services/interfaces/interfaces';
 import { AddressDTO } from '../../../common/dtos/address/AddressDTO';
 import * as uuid from 'uuid';
-import { Pagination } from '@mui/material';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Pagination,
+} from '@mui/material';
+import { deleteUser, sendUserInfo } from '../../../store/user/actions';
 
 function Row(props: {
   row: UserDTO;
@@ -36,9 +44,21 @@ function Row(props: {
     id_adress: number;
     name: string;
   };
+  onDelete: () => void;
 }) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const dispatch = useTypedDispatch();
+
+  const [openUserInfo, setOpenUserInfo] = React.useState(false);
+  const [openDialogSend, setOpenDialogSend] = React.useState(false);
+  const [openDialogDelete, setOpenDialogDelete] = React.useState(false);
+
+  const handleSendUserInfo = () => {
+    dispatch(sendUserInfo(props.row.id));
+  };
+
+  const handleDeleteUser = () => {
+    dispatch(deleteUser(props.row.id));
+  };
 
   return (
     <React.Fragment>
@@ -47,29 +67,77 @@ function Row(props: {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpenUserInfo(!openUserInfo)}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {openUserInfo ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.full_name}
+          {props.row.full_name}
         </TableCell>
         <TableCell align="right">
-          <Button variant="contained" endIcon={<SendIcon />}>
+          <Button
+            variant="contained"
+            onClick={() => setOpenDialogSend(true)}
+            endIcon={<SendIcon />}
+          >
             Send
           </Button>
+          <Dialog
+            open={openDialogSend}
+            onClose={() => setOpenDialogSend(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {'Надіслати дані для входу Реєстратору?'}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {`Дані будуть надіслані на цю електрону адресу ${props.row.email}`}
+                {'Ви впевнені?'}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleSendUserInfo} autoFocus>
+                Так
+              </Button>
+              <Button onClick={() => setOpenDialogSend(false)}>Ні</Button>
+            </DialogActions>
+          </Dialog>
         </TableCell>
         <TableCell align="right">
           <Button variant="outlined" startIcon={<DeleteIcon />}>
             Delete
           </Button>
+          <Dialog
+            open={openDialogDelete}
+            onClose={() => setOpenDialogDelete(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {'Видалити Реєстратора?'}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {'Реєстратор та всі його дані будуть видалені.'}
+                {'Ви впевнені?'}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDeleteUser} autoFocus>
+                Так
+              </Button>
+              <Button onClick={() => setOpenDialogDelete(false)}>Ні</Button>
+            </DialogActions>
+          </Dialog>
         </TableCell>
       </TableRow>
 
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
+          <Collapse in={openUserInfo} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
                 Повна інформація
@@ -166,7 +234,7 @@ export default function UserTable() {
 
   React.useEffect(() => {
     dispatch(fetchUsersRelations());
-    dispatch(fetchRegistrarsDate(userFilter));
+    dispatch(fetchRegistrarsData(userFilter));
   }, [dispatch]);
 
   if (!registrars.organizations) {
@@ -174,13 +242,12 @@ export default function UserTable() {
   }
 
   if (registrars.registrars.length === 0) {
-    dispatch(fetchRegistrarsDate(userFilter));
+    dispatch(fetchRegistrarsData(userFilter));
   }
-  console.log(registrars.authorities, 'orgs');
 
   const handleChangePage = (event: unknown, newPage: number) => {
     userFilter.page = newPage;
-    dispatch(fetchRegistrarsDate(userFilter));
+    dispatch(fetchRegistrarsData(userFilter));
   };
 
   if (
@@ -212,6 +279,7 @@ export default function UserTable() {
                     row.id_authority_that_issued_the_passport
                   ]
                 }
+                onDelete={() => dispatch(fetchRegistrarsData(userFilter))}
               />
             ))}
           </TableBody>

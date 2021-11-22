@@ -38,6 +38,8 @@ const refreshToken = () => async (dispatch: Dispatch) => {
       }),
     );
   } catch (error) {
+    console.log(error);
+
     localStorage.clear();
     dispatch(
       uiActions.showNotification({
@@ -77,6 +79,8 @@ const login =
         }),
       );
     } catch (error) {
+      console.log(error);
+
       dispatch(
         uiActions.showNotification({
           status: 'error',
@@ -92,4 +96,52 @@ const logout = () => (dispatch: Dispatch) => {
   dispatch(userActions.setUser({ user: null, role: 'user' }));
 };
 
-export { login, logout };
+const sendUserInfo = (id: number) => (dispatch: Dispatch) => {
+  userService
+    .sendDataUser(id)
+    .then((res) =>
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: `Дані успішно надіслані на пошту ${res.email}`,
+        }),
+      ),
+    )
+    .catch((error) => {
+      console.log(error);
+
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Failed Send User Data!',
+        }),
+      );
+    });
+};
+
+const deleteUser = (id: number) => async (dispatch: Dispatch) => {
+  try {
+    const res = await userService.deleteUserById(id);
+    dispatch(
+      uiActions.showNotification({
+        status: 'success',
+        title: 'Success!',
+        message: 'Реєстратора успішно видалено',
+      }),
+    );
+  } catch (error) {
+    console.log(error);
+
+    dispatch(
+      uiActions.showNotification({
+        status: 'error',
+        title: 'Error!',
+        message: 'Failed Delete Registrar!',
+      }),
+    );
+  }
+};
+
+export { login, logout, sendUserInfo, deleteUser };

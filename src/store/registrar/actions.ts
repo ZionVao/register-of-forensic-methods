@@ -5,7 +5,7 @@ import { uiActions } from '../ui/slice';
 import { registrarActions } from './slice';
 import { AddressDTO } from '../../common/dtos/address/AddressDTO';
 
-export const fetchRegistrarsDate =
+export const fetchRegistrarsData =
   (filter: UserFilter) => (dispatch: Dispatch) => {
     userService
       .getUsers(filter)
