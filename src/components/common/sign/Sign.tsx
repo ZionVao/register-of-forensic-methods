@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 // import { LoginForm, RegistrationForm } from './components/components';
 
 import { useTypedDispatch } from '../../../store/store';
-import { login, register } from '../../../store/user/actions';
+import { login } from '../../../store/user/actions';
 import { AppRoute } from '../../../common/enum/enums';
 import { Grid } from '@mui/material';
 import LoginForm from './LoginForm';

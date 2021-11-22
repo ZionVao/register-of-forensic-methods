@@ -1,6 +1,6 @@
 import { MethodDTO } from '../../common/dtos/method/MethodDTO';
 
-export class MetodMapper {
+export class MethodMapper {
   public static toDTO(value: { [x: string | number]: any }): MethodDTO {
     return {
       id: value.id,
@@ -24,17 +24,13 @@ export class MetodMapper {
       year_making_changes: value.year_making_changes || null,
       year_termination_application: value.year_termination_application || null,
 
-      date_of_decision_on_state_registration: new Date(
+      date_of_decision_on_state_registration:
         value.date_of_decision_on_state_registration,
-      ),
+
       date_of_decision_on_state_registration_of_changes:
-        value.date_of_decision_on_state_registration_of_changes
-          ? new Date(value.date_of_decision_on_state_registration_of_changes)
-          : null,
+        value.date_of_decision_on_state_registration_of_changes || null,
       date_of_decision_to_terminate_the_application:
-        value.date_of_decision_to_terminate_the_application
-          ? new Date(value.date_of_decision_to_terminate_the_application)
-          : null,
+        value.date_of_decision_to_terminate_the_application || null,
 
       doc_copy_of_method: value.doc_copy_of_method,
       doc_report_review: value.doc_report_review,

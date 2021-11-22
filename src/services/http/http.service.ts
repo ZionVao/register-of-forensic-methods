@@ -4,6 +4,9 @@ import { StorageKey, HttpHeader, HttpMethod } from '../../common/enum/enums';
 import { StorageService } from '../storage/storage.service';
 import { Options, Query } from '../interfaces/interfaces';
 import { IHttpService } from './IHttpServise';
+import { config } from 'dotenv';
+
+config();
 
 class Http implements IHttpService {
   private _storage: StorageService;
@@ -22,41 +25,6 @@ class Http implements IHttpService {
     } = options;
     const headers = this._getHeaders(hasAuth, contentType);
 
-    // return [
-    //   {
-    //     id: 1,
-    //     registration_code: '0.1.01',
-    //     name: 'Методика комплексної експертизи та її використання при розслідуванні вбивств',
-
-    //     author: 'Шиканов В.І.',
-
-    //     id_domaims: 1,
-    //     domainsOfMethod: {
-    //       id: 1,
-    //       name: '0.1. Комплексна експертиза',
-    //       id_types: 1,
-    //       typesOfMethods: {
-    //         id: 1,
-    //         name: '	0. Комплексна експертиза',
-    //       },
-    //     },
-
-    //     year_creation: 1976,
-    //     year_making_changes: null,
-    //     year_termination_application: null,
-
-    //     date_of_decision_on_state_registration: new Date('06-02-2009'),
-    //     date_of_decision_on_state_registration_of_changes: null,
-    //     date_of_decision_to_terminate_the_application: null,
-
-    //     doc_copy_of_method: 'value.doc_copy_of_method',
-    //     doc_report_review: 'value.doc_report_review',
-    //     doc_certificate_of_approbation: 'value.doc_certificate_of_approbation',
-    //     doc_copy_of_implementation: 'value.doc_copy_of_implementation',
-    //     doc_discount_card: ' value.doc_discount_card',
-    //   },
-    // ];
-
     const request = new Request(this._getUrl(url, query), {
       method: method,
       headers: headers,
@@ -64,10 +32,18 @@ class Http implements IHttpService {
     });
     console.log('1');
 
-    return fetch(request)
-      .then(this._checkStatus)
-      .then(this._parseJSON)
-      .catch(this._throwError);
+    const a = await fetch(request);
+    // this._checkStatus(a);
+    const b = await a.json();
+
+    console.log(b);
+
+    return b;
+
+    // return this._parseJSON(a);
+    // .then(this._checkStatus)
+    // .then(this._parseJSON)
+    // .catch(this._throwError);
   }
 
   private _getHeaders(hasAuth: boolean, contentType?: string): Headers {
@@ -105,9 +81,9 @@ class Http implements IHttpService {
   private _getUrl(url: string, query?: Query) {
     console.log(url, query);
 
-    return `https://6a71-77-47-204-65.ngrok.io${url}${
-      query ? `?${getStringifiedQuery(query)}` : ''
-    }`;
+    const api = process.env.REACT_APP_HOST_API;
+
+    return `${api}${url}${query ? `?${getStringifiedQuery(query)}` : ''}`;
   }
 
   private async _parseJSON(response: Response): Promise<any> {

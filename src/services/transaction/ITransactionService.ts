@@ -1,6 +1,10 @@
 import { TransactionDTO } from '../../common/dtos/transaction/TransactionDTO';
-import { Filter } from '../interfaces/interfaces';
+import { TransactionFilter } from '../interfaces/interfaces';
 
 export interface ITransactionService {
-  getTransactions(filter: Filter): Promise<TransactionDTO[]>;
+  getTransactions(
+    filter: TransactionFilter,
+  ): Promise<{ logs: TransactionDTO[]; count: number }>;
+  deleteTransaction(id: number): Promise<{ id: number }>;
+  getActions(): Promise<{ id: number; name: string }[]>;
 }

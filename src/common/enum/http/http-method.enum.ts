@@ -2,7 +2,7 @@ const HttpMethod = {
   GET: 'GET',
   POST: 'POST',
   PUT: 'PUT',
-  DELELTE: 'DELETE',
+  DELETE: 'DELETE',
 };
 
 export { HttpMethod };

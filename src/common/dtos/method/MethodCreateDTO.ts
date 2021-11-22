@@ -2,8 +2,7 @@ export interface MethodCreateDTO {
   registration_code: string;
   name: string;
 
-  id_domaims: number;
-  id_types: number;
+  id_domains: number;
 
   year_creation: number;
   year_making_changes: number | null;
@@ -20,4 +19,6 @@ export interface MethodCreateDTO {
   doc_copy_of_implementation: string;
 
   doc_discount_card: string;
+
+  author: string;
 }

@@ -4,7 +4,9 @@ export const AppRoute = {
   LOGIN: '/login',
 
   METHOD: '/method',
+  CREATE_METHOD: '/method-create',
   REGISTRY: '/registry',
+  CREATE_REGISTRY: '/registry-create',
   TRANSACTION: '/transaction',
 
   USER: '/user',

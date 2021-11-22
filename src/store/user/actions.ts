@@ -2,58 +2,94 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { StorageKey } from '../../common/enum/enums';
 import {
   storage as storageService,
-  auth as authService,
+  userService,
 } from '../../services/services';
-import { userActions } from './slice';
+import { userActions, UserRole } from './slice';
 import { uiActions } from '../ui/slice';
-import { UserCreateDTO } from '../../common/dtos/user/UserCreateDTO';
+
+const getUserRole = (id: number): UserRole => {
+  switch (id) {
+    case 1:
+      return 'registrator';
+    case 2:
+      return 'admin';
+    default:
+      return 'user';
+  }
+};
+
+const refreshToken = () => async (dispatch: Dispatch) => {
+  try {
+    const res = await userService.token();
+    console.log(res);
+    storageService.setItem(StorageKey.TOKEN, res.Token);
+    if (storageService.getItem(StorageKey.TOKEN)) {
+      setTimeout(() => {
+        if (storageService.getItem(StorageKey.REFRESH_TOKEN)) {
+          refreshToken()(dispatch);
+        }
+      }, 600000);
+    }
+    dispatch(
+      uiActions.showNotification({
+        status: 'success',
+        title: 'Success!',
+        message: 'Token Refreshed!',
+      }),
+    );
+  } catch (error) {
+    localStorage.clear();
+    dispatch(
+      uiActions.showNotification({
+        status: 'error',
+        title: 'Error!',
+        message: 'Failed Refresh Token!',
+      }),
+    );
+  }
+};
 
 const login =
-  (request: { email: string; password: string }) => (dispatch: Dispatch) => {
-    authService
-      .login(request)
-      .then((res) => {
-        console.log(res);
+  (request: { email: string; password: string }) =>
+  async (dispatch: Dispatch) => {
+    try {
+      const res = await userService.login(request);
+      console.log(res);
+      storageService.setItem(StorageKey.TOKEN, res.Token);
 
-        storageService.setItem(StorageKey.TOKEN, res.token);
-        //decrypt token
-        const u = { role: 1, id: 1 };
+      const user = await userService.getUserByToken();
+      storageService.setItem(StorageKey.USER, JSON.stringify(user));
 
-        const role = u.role === 1 ? 'registrator' : 'admin';
-        dispatch(userActions.setUser({ user: res.user, role: role }));
-      })
-      .catch(() => {
-        dispatch(
-          uiActions.showNotification({
-            status: 'error',
-            title: 'Error!',
-            message: 'Failed Login!',
-          }),
-        );
-      });
-  };
+      storageService.setItem(
+        StorageKey.REFRESH_TOKEN,
+        StorageKey.REFRESH_TOKEN,
+      );
+      setTimeout(() => refreshToken()(dispatch), 6000);
 
-const register = (request: UserCreateDTO) => (dispatch: Dispatch) => {
-  authService
-    .registration(request)
-    .then((res) => {
-      storageService.setItem(StorageKey.TOKEN, res.token);
-      dispatch(userActions.setUser({ user: res.user, role: 'registrator' }));
-    })
-    .catch(() => {
+      dispatch(
+        userActions.setUser({ user: user, role: getUserRole(user.id_role) }),
+      );
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: `Користувач ${user.full_name} увійшов`,
+        }),
+      );
+    } catch (error) {
       dispatch(
         uiActions.showNotification({
           status: 'error',
           title: 'Error!',
-          message: 'Failed Register!',
+          message: 'Failed Login!',
         }),
       );
-    });
-};
+    }
+  };
 
 const logout = () => (dispatch: Dispatch) => {
   storageService.removeItem(StorageKey.TOKEN);
   dispatch(userActions.setUser({ user: null, role: 'user' }));
 };
 
-export { login, register, logout };
+export { login, logout };

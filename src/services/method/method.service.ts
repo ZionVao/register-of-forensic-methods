@@ -4,8 +4,8 @@ import { MethodCreateDTO } from '../../common/dtos/method/MethodCreateDTO';
 import { MethodDTO } from '../../common/dtos/method/MethodDTO';
 import { MethodUpdateDTO } from '../../common/dtos/method/MethodUpdateDTO';
 import { IMethodService } from './IMethodServise';
-import { MetodMapper } from './MethodMapper';
-import { Filter } from '../interfaces/interfaces';
+import { MethodMapper } from './MethodMapper';
+import { MethodFilter } from '../interfaces/interfaces';
 
 class MethodService implements IMethodService {
   private _http: IHttpService;
@@ -13,52 +13,42 @@ class MethodService implements IMethodService {
     this._http = http;
   }
 
-  async getAllMethods(filter: Filter): Promise<MethodDTO[]> {
-    const metods = await this._http.load('/main/method', {
+  async getAllMethods(
+    filter: MethodFilter,
+  ): Promise<{ methods: MethodDTO[]; count: number }> {
+    const methods = await this._http.load('/main/method', {
       method: HttpMethod.GET,
-      query: { ...filter },
-      hasAuth: Boolean(filter.userId),
+      query: { ...filter, ids: filter.ids ? filter.ids.join(', ') : undefined },
     });
-    return metods.map(MetodMapper.toDTO);
+    return {
+      methods: methods.methods.map(MethodMapper.toDTO),
+      count: methods.count,
+    };
   }
 
   async getMethod(id: number): Promise<MethodDTO> {
     const metod = await this._http.load(`/main/method/${id}`, {
       method: HttpMethod.GET,
-      hasAuth: true,
     });
-    return MetodMapper.toDTO(metod);
+    return MethodMapper.toDTO(metod);
   }
 
-  async addMethod(payload: MethodCreateDTO): Promise<MethodDTO> {
-    const metod = await this._http.load('/main/method', {
+  async addMethod(payload: MethodCreateDTO): Promise<{ id: number }> {
+    return this._http.load('/main/method', {
       method: HttpMethod.POST,
-      contentType: ContentType.JSON,
       payload: JSON.stringify(payload),
       hasAuth: true,
     });
-    return MetodMapper.toDTO(metod);
   }
 
-  async updateMetod(method: MethodUpdateDTO): Promise<boolean> {
-    return this._http.load('/main/method', {
-      method: HttpMethod.PUT,
-      contentType: ContentType.JSON,
-      payload: JSON.stringify({
-        method,
-      }),
-      hasAuth: true,
-    });
-  }
-  async getTotallCount(): Promise<number> {
-    return this._http.load('/main/method', {
-      method: HttpMethod.GET,
-    });
-  }
-
-  async deleteMethod(id: number): Promise<boolean> {
+  async updateMetod(
+    id: number,
+    method: MethodUpdateDTO,
+  ): Promise<{ id: number }> {
     return this._http.load(`/main/method/${id}`, {
-      method: HttpMethod.DELELTE,
+      method: HttpMethod.PUT,
+      contentType: ContentType.MULTIPART,
+      payload: JSON.stringify(method),
       hasAuth: true,
     });
   }

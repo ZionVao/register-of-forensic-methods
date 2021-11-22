@@ -1,13 +1,13 @@
 import { MethodCreateDTO } from '../../common/dtos/method/MethodCreateDTO';
 import { MethodDTO } from '../../common/dtos/method/MethodDTO';
 import { MethodUpdateDTO } from '../../common/dtos/method/MethodUpdateDTO';
-import { Filter } from '../interfaces/interfaces';
+import { MethodFilter } from '../interfaces/interfaces';
 
 export interface IMethodService {
-  getAllMethods(filter: Filter): Promise<MethodDTO[]>;
+  getAllMethods(
+    filter: MethodFilter,
+  ): Promise<{ methods: MethodDTO[]; count: number }>;
   getMethod(id: number): Promise<MethodDTO>;
-  addMethod(payload: MethodCreateDTO): Promise<MethodDTO>;
-  updateMetod(metod: MethodUpdateDTO): Promise<boolean>;
-  deleteMethod(id: number): Promise<boolean>;
-  getTotallCount(): Promise<number>;
+  addMethod(payload: MethodCreateDTO): Promise<{ id: number }>;
+  updateMetod(id: number, metod: MethodUpdateDTO): Promise<{ id: number }>;
 }

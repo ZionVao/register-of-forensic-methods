@@ -56,10 +56,12 @@ export default function Menu() {
         selectionFollowsFocus
       >
         {menuTabs.public.map((tab) => (
-          <Tab label={tab.name} href={tab.link} />
+          <Tab label={tab.name} key={tab.name} href={tab.link} />
         ))}
         {user.role === 'admin' &&
-          menuTabs.admin.map((tab) => <Tab label={tab.name} href={tab.link} />)}
+          menuTabs.admin.map((tab) => (
+            <Tab label={tab.name} key={tab.name} href={tab.link} />
+          ))}
       </Tabs>
     </Box>
   );

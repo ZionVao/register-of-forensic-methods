@@ -4,6 +4,7 @@ import { RootState } from '../store';
 
 interface MethodContent {
   methods: MethodDTO[];
+  totalCount: number;
   page: number;
 }
 
@@ -12,6 +13,7 @@ interface MethodState {
   page: number;
   count: number;
   totalPages: number;
+  totalCount: number;
 }
 
 const initialState: MethodState = {
@@ -19,6 +21,7 @@ const initialState: MethodState = {
   page: 1,
   count: 10,
   totalPages: 1,
+  totalCount: 0,
 };
 
 const methodSlice = createSlice({
@@ -27,10 +30,8 @@ const methodSlice = createSlice({
   reducers: {
     replaceMethod: (state, action: PayloadAction<MethodContent>) => {
       state.methods = action.payload.methods;
-      state.count = action.payload.methods.length;
       state.page = action.payload.page;
-    },
-    getPagesCount: (state, action: PayloadAction<{ totalCount: number }>) => {
+      state.totalCount = action.payload.totalCount;
       state.totalPages = Math.ceil(action.payload.totalCount / state.count);
     },
   },

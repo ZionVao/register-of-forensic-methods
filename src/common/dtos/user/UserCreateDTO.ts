@@ -8,4 +8,11 @@ export interface UserCreateDTO {
   email: string;
   id_role: number;
   id_organizations: number;
+  passport_number: string;
+  id_position: string;
+  region: string;
+  city: string;
+  street: string;
+  house_number: number;
+  flat_number: number | null;
 }

@@ -1,5 +1,6 @@
 const ContentType = {
-  JSON: 'application/json'
+  JSON: 'application/json',
+  MULTIPART: 'multipart/form-data',
 };
 
 export { ContentType };
