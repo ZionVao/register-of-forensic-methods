@@ -94,7 +94,7 @@ function Row(props: {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {`Дані будуть надіслані на цю електрону адресу ${props.row.email}`}
+                {`Дані будуть надіслані на цю електрону адресу ${props.row.email} `}
                 {'Ви впевнені?'}
               </DialogContentText>
             </DialogContent>
@@ -107,7 +107,11 @@ function Row(props: {
           </Dialog>
         </TableCell>
         <TableCell align="right">
-          <Button variant="outlined" startIcon={<DeleteIcon />}>
+          <Button
+            variant="outlined"
+            onClick={() => setOpenDialogDelete(true)}
+            startIcon={<DeleteIcon />}
+          >
             Delete
           </Button>
           <Dialog
@@ -121,7 +125,7 @@ function Row(props: {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {'Реєстратор та всі його дані будуть видалені.'}
+                {'Реєстратор та всі його дані будуть видалені. '}
                 {'Ви впевнені?'}
               </DialogContentText>
             </DialogContent>

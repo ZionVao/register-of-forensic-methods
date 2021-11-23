@@ -1,19 +1,67 @@
-import { Button, Grid, Paper, Stack, TextField } from '@mui/material';
+import { Box, Button, Grid, Paper, Stack, TextField } from '@mui/material';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import * as React from 'react';
 
-const fWidth = 300;
+const fWidth = 500;
 
 export function CreateUser() {
-  const [value, setValue] = React.useState<Date | null>(null);
+  const [email, setEmail] = React.useState({ value: '', isValid: true });
+  const [fullName, setFullName] = React.useState({ value: '', isValid: true });
+  const [dateOfBirth, setDateOfBirth] = React.useState<{
+    value: Date | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [seriesPassport, setSeriesPassport] = React.useState<{
+    value: string | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [passportNumber, setPassportNumber] = React.useState({
+    value: '',
+    isValid: true,
+  });
+  const [dateOfIssueOfPassport, setDateOfIssueOfPassport] = React.useState<{
+    value: Date | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [idAuthority, setIdAuthority] = React.useState<{
+    value: number | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [iTN, setITN] = React.useState({ value: '', isValid: true });
+  const [idOrganizations, setIdOrganizations] = React.useState<{
+    value: number | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [idPosition, setIdPosition] = React.useState<{
+    value: number | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [region, setRegion] = React.useState({ value: '', isValid: true });
+  const [city, setCity] = React.useState({ value: '', isValid: true });
+  const [street, setStreet] = React.useState({ value: '', isValid: true });
+  const [houseNumber, setHouseNumber] = React.useState<{
+    value: number | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+  const [flatNumber, setFlatNumber] = React.useState<{
+    value: number | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+
+  const [value, setValue] = React.useState<{
+    value: Date | null;
+    isValid: Boolean;
+  }>({ value: null, isValid: true });
+
   return (
     <Paper
       sx={{
         margin: 'auto',
         flexGrow: 1,
+
         padding: 2,
       }}
     >
@@ -30,6 +78,7 @@ export function CreateUser() {
           justifyContent="flex-start"
           alignItems="center"
           spacing={2}
+          sx={{ p: 1 }}
         >
           <TextField
             id="outlined-basic"
@@ -48,7 +97,7 @@ export function CreateUser() {
               label="Дата народження"
               value={value}
               onChange={(newValue) => {
-                setValue(newValue);
+                // setValue(newValue);
               }}
               renderInput={(params) => (
                 <TextField {...params} sx={{ width: fWidth }} />
@@ -61,6 +110,7 @@ export function CreateUser() {
           justifyContent="flex-start"
           alignItems="center"
           spacing={2}
+          sx={{ p: 1 }}
         >
           <TextField
             id="outlined-basic"
@@ -79,20 +129,20 @@ export function CreateUser() {
               label="Дата видачі паспорту"
               value={value}
               onChange={(newValue) => {
-                setValue(newValue);
+                // setValue(newValue);
               }}
               renderInput={(params) => (
                 <TextField {...params} sx={{ width: fWidth }} />
               )}
             />
           </LocalizationProvider>
-          <Button variant="outlined">Добавити</Button>
         </Stack>
         <Stack
           direction="column"
           justifyContent="flex-start"
           alignItems="center"
           spacing={2}
+          sx={{ p: 1 }}
         >
           <TextField
             id="outlined-basic"
@@ -114,6 +164,9 @@ export function CreateUser() {
           />
         </Stack>
       </Grid>
+      <Box textAlign="center">
+        <Button variant="outlined">Добавити</Button>
+      </Box>
     </Paper>
   );
 }
