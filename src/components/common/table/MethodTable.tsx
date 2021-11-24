@@ -117,7 +117,7 @@ const privateColumns: Column[] = [
         startIcon={<EditIcon />}
         variant="contained"
       >
-        Save
+        Edit
       </Button>
     ),
   },

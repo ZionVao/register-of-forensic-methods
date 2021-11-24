@@ -27,3 +27,5 @@ export const fetchMethodsData =
         );
       });
   };
+
+export const createMethod = () => (dispatch: Dispatch) => {};

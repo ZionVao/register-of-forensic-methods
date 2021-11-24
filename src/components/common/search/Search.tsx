@@ -37,7 +37,7 @@ export const Search = () => {
   return (
     <>
       <Paper sx={{ margin: 'auto', flexGrow: 1, width: '100%' }}>
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, p: 3 }}>
           <Grid
             container
             direction="row"
