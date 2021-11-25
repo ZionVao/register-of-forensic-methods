@@ -35,6 +35,7 @@ export const fetchUsersRelations = () => async (dispatch: Dispatch) => {
     userService.getOrganizations(),
     userService.getAddresses(),
     userService.getAuthorities(),
+    userService.getPositions(),
   ])
     .then((values) => {
       const organizations = values[0].reduce(
@@ -87,6 +88,18 @@ export const fetchUsersRelations = () => async (dispatch: Dispatch) => {
         },
         {},
       );
+      const position = values[3].reduce(
+        (
+          acc: { [id: string | number]: { name: string } },
+          obj: { id: number; name: string },
+        ) => {
+          acc[obj.id] = {
+            name: obj.name,
+          };
+          return acc;
+        },
+        {},
+      );
       console.log(authorities, 'authorities');
 
       dispatch(
@@ -94,6 +107,7 @@ export const fetchUsersRelations = () => async (dispatch: Dispatch) => {
           organizations: organizations,
           authorities: authorities,
           addresses: addresses,
+          position: position,
         }),
       );
     })

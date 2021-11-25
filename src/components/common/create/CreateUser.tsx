@@ -1,4 +1,12 @@
-import { Box, Button, Grid, Paper, Stack, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Stack,
+  TextField,
+} from '@mui/material';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -138,6 +146,21 @@ export function CreateUser() {
       dispatch(createUser(user));
     }
   };
+  const organizations = Object.keys(autocompleteFields.organizations).map(
+    (e) => ({ id: Number(e), name: autocompleteFields.organizations[e].name }),
+  );
+
+  //держ орган що видав папорт
+  const authorities = Object.keys(autocompleteFields.authorities).map((e) => ({
+    id: Number(e),
+    name: autocompleteFields.authorities[e].name,
+  }));
+
+  //посада
+  const positions = Object.keys(autocompleteFields.position).map((e) => ({
+    id: Number(e),
+    name: autocompleteFields.position[e].name,
+  }));
 
   return (
     <Paper
@@ -163,16 +186,37 @@ export function CreateUser() {
           spacing={2}
           sx={{ p: 1 }}
         >
-          <TextField
-            id="outlined-basic"
-            label="Назва державного органу"
-            variant="outlined"
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={organizations}
             sx={{ width: fWidth }}
+            getOptionLabel={(option) => option.name}
+            onChange={(
+              event: any,
+              option: { name: string; id: number } | null,
+            ) =>
+              setUserData({
+                ...userData,
+                id_organizations: option === null ? null : option.id,
+              })
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Назва державного органу" />
+            )}
           />
           <TextField
             id="outlined-basic"
             label="ПІБ"
             variant="outlined"
+            required
+            value={userData.full_name}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                full_name: event.target.value,
+              })
+            }
             sx={{ width: fWidth }}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -195,16 +239,68 @@ export function CreateUser() {
           spacing={2}
           sx={{ p: 1 }}
         >
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={positions}
+            sx={{ width: fWidth }}
+            getOptionLabel={(option) => option.name}
+            onChange={(
+              event: any,
+              option: { name: string; id: number } | null,
+            ) =>
+              setUserData({
+                ...userData,
+                id_position: option === null ? null : option.id,
+              })
+            }
+            renderInput={(params) => <TextField {...params} label="Посада" />}
+          />
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={authorities}
+            sx={{ width: fWidth }}
+            getOptionLabel={(option) => option.name}
+            onChange={(
+              event: any,
+              option: { name: string; id: number } | null,
+            ) =>
+              setUserData({
+                ...userData,
+                id_authority_that_issued_the_passport:
+                  option === null ? null : option.id,
+              })
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Назва державного органу" />
+            )}
+          />
           <TextField
             id="outlined-basic"
             label="Номер паспорта"
             variant="outlined"
+            required
+            value={userData.passport_number}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                passport_number: event.target.value,
+              })
+            }
             sx={{ width: fWidth }}
           />
           <TextField
             id="outlined-basic"
             label="Серія паспорта"
             variant="outlined"
+            value={userData.series_passport}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                series_passport: event.target.value,
+              })
+            }
             sx={{ width: fWidth }}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -230,28 +326,109 @@ export function CreateUser() {
           spacing={2}
           sx={{ p: 1 }}
         >
-          <TextField
+          {/* <TextField
             id="outlined-basic"
             label="Орган, що видав паспорт"
             variant="outlined"
+            
             sx={{ width: fWidth }}
-          />
+          /> */}
+          {/* <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={authorities}
+            sx={{ width: fWidth }}
+            getOptionLabel={(option) => option.name}
+            onChange={(
+              event: any,
+              option: { name: string; id: number } | null,
+            ) =>
+              setUserData({
+                ...userData,
+                id_authority_that_issued_the_passport:
+                  option === null ? null : option.id,
+              })
+            }
+            renderInput={(params) => (
+              <TextField {...params} label="Орган, що видав паспорт" />
+            )}
+          /> */}
           <TextField
             id="outlined-basic"
-            label="Рекомендаційний номер облікової карти платника"
+            label="Індифікаційний номер облікової карти платника"
             variant="outlined"
+            required
+            value={userData.ITN}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                ITN: event.target.value,
+              })
+            }
             sx={{ width: fWidth }}
           />
           <TextField
             id="outlined-basic"
             label="Електронна адреса"
             variant="outlined"
+            required
+            value={userData.email}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                email: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />
+          <TextField
+            id="outlined-basic"
+            label="Електронна адреса"
+            variant="outlined"
+            required
+            value={userData.email}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                email: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />{' '}
+          <TextField
+            id="outlined-basic"
+            label="Електронна адреса"
+            variant="outlined"
+            required
+            value={userData.email}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                email: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />{' '}
+          <TextField
+            id="outlined-basic"
+            label="Електронна адреса"
+            variant="outlined"
+            required
+            value={userData.email}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                email: event.target.value,
+              })
+            }
             sx={{ width: fWidth }}
           />
         </Stack>
       </Grid>
       <Box textAlign="center">
-        <Button variant="outlined">Добавити</Button>
+        <Button variant="outlined" onClick={handleOnClickAdd}>
+          Добавити
+        </Button>
       </Box>
     </Paper>
   );

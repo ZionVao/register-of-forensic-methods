@@ -26,12 +26,18 @@ interface RegistrarContent {
   totalCount: number;
   page: number;
 }
+interface IPosition {
+  [id: string | number]: {
+    name: string;
+  };
+}
 
 interface RegistrarState {
   registrars: UserDTO[];
   organizations: IOrganizations;
   addresses: IAddresses;
   authorities: IAuthorities;
+  position: IPosition;
   page: number;
   count: number;
   totalPages: number;
@@ -43,6 +49,7 @@ const initialState: RegistrarState = {
   organizations: {},
   addresses: {},
   authorities: {},
+  position: {},
   page: 1,
   count: 10,
   totalPages: 1,
@@ -65,11 +72,13 @@ const registorSlice = createSlice({
         organizations: IOrganizations;
         addresses: IAddresses;
         authorities: IAuthorities;
+        position: IPosition;
       }>,
     ) => {
       state.organizations = action.payload.organizations;
       state.addresses = action.payload.addresses;
       state.authorities = action.payload.authorities;
+      state.position = action.payload.position;
     },
   },
 });
