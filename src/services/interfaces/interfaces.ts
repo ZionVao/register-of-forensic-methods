@@ -22,7 +22,7 @@ export interface Options {
 // }
 
 export interface MethodFilter {
-  ids?: number[];
+  ids?: string;
   name?: string;
   code?: string;
   page: number;

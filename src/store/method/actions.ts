@@ -7,6 +7,8 @@ import { methodActions } from './slice';
 
 export const fetchMethodsData =
   (filter: MethodFilter) => (dispatch: Dispatch) => {
+    console.log(filter, 'tut');
+
     methodService
       .getAllMethods(filter)
       .then((methods) => {

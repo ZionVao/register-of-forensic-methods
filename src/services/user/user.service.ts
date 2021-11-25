@@ -40,7 +40,7 @@ export class UserService implements IUserService {
       contentType: ContentType.JSON,
       payload: JSON.stringify(payload),
     });
-    this.__refreshToken();
+    // this.__refreshToken();
     return { Token: res.Token };
   }
 

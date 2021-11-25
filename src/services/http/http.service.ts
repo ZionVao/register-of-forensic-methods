@@ -11,8 +11,23 @@ import { Options, Query } from '../interfaces/interfaces';
 import { IHttpService } from './IHttpServise';
 import { config } from 'dotenv';
 import axios from 'axios';
+import { Method } from '@testing-library/react';
 
 config();
+
+type HMethod =
+  | 'get'
+  | 'GET'
+  | 'delete'
+  | 'DELETE'
+  | 'head'
+  | 'HEAD'
+  | 'options'
+  | 'OPTIONS'
+  | 'post'
+  | 'POST'
+  | 'put'
+  | 'PUT';
 
 class Http implements IHttpService {
   private _storage: StorageService;
@@ -30,22 +45,37 @@ class Http implements IHttpService {
       query,
       form = null,
     } = options;
+
     const headers = this._getHeaders(hasAuth, contentType);
 
     if (contentType === ContentType.MULTIPART) {
       console.log(form, 'form');
 
       const token = this._storage.getItem(StorageKey.TOKEN);
-
-      const a = await axios({
-        method: 'post',
-        data: form,
-        url: this._getUrl(url, query),
-        headers: {
-          'Content-Type': ContentType.MULTIPART,
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (method === HttpMethod.PUT) {
+        const a = await axios({
+          method: 'put',
+          data: form,
+          url: this._getUrl(url, query),
+          headers: {
+            'Content-Type': ContentType.MULTIPART,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return a;
+      }
+      if (method === HttpMethod.POST) {
+        const a = await axios({
+          method: 'post',
+          data: form,
+          url: this._getUrl(url, query),
+          headers: {
+            'Content-Type': ContentType.MULTIPART,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return a;
+      }
 
       // const request = new Request(this._getUrl(url, query), {
       //   method: method,
@@ -63,8 +93,6 @@ class Http implements IHttpService {
       // const b = await a.json();
 
       // console.log(a);
-
-      return a;
     } else {
       const request = new Request(this._getUrl(url, query), {
         method: method,

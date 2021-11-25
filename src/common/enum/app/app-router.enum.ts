@@ -3,6 +3,7 @@ export const AppRoute = {
   ANY: '*',
   LOGIN: '/login',
 
+  UPDATE_METHOD: '/method/:id',
   METHOD: '/method',
   CREATE_METHOD: '/method-create',
   REGISTRY: '/registry',

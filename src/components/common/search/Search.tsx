@@ -24,7 +24,7 @@ const createData = (types: TypeDTO[]): Section => {
 type Selected = { [x: string]: Checked };
 
 export const Search = (props: {
-  onSearch: (name: string, ids: number[]) => void;
+  onSearch: (name: string, ids: string) => void;
 }) => {
   const types = useTypedSelector(loadTypes);
   const sections = createData(types.types);
@@ -37,18 +37,17 @@ export const Search = (props: {
 
   const [selected, setSelected] = React.useState<Selected>({});
 
-  const handleSearch = React.useCallback(
-    (name: string) => {
-      const ids: number[] = [];
-      Object.values(selected).forEach((el: Checked) => {
-        Object.keys(el).forEach((id: string) => {
-          if (el[id].status) ids.push(Number(id));
-        });
+  const handleSearch = React.useCallback((name: string) => {
+    const ids: string[] = [];
+    Object.values(selected).forEach((el: Checked) => {
+      Object.keys(el).forEach((id: string) => {
+        if (el[id].status === true) ids.push(id);
       });
-      return props.onSearch(name, ids);
-    },
-    [dispatch],
-  );
+    });
+    console.log(ids.join(','));
+
+    return props.onSearch(name, ids.join(','));
+  }, []);
 
   return (
     <>

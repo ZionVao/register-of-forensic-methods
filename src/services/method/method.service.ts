@@ -16,9 +16,11 @@ class MethodService implements IMethodService {
   async getAllMethods(
     filter: MethodFilter,
   ): Promise<{ methods: MethodDTO[]; count: number }> {
+    console.log(filter);
+
     const methods = await this._http.load('/main/method', {
       method: HttpMethod.GET,
-      query: { ...filter, ids: filter.ids ? filter.ids.join(', ') : undefined },
+      query: { ...filter },
     });
     return {
       methods: methods.methods.map(MethodMapper.toDTO),
@@ -46,7 +48,7 @@ class MethodService implements IMethodService {
     return this._http.load(`/main/method/${id}`, {
       method: HttpMethod.PUT,
       contentType: ContentType.MULTIPART,
-      payload: JSON.stringify(method),
+      form: method,
       hasAuth: true,
     });
   }

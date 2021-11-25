@@ -121,10 +121,10 @@ const privateColumns: Column[] = [
   {
     id: 'change_row',
     label: 'Внести зміни',
-    format: (value: string) => (
+    format: (value: number) => (
       <Button
         color="secondary"
-        href={AppRoute.METHOD}
+        href={`${AppRoute.METHOD}/${value}`}
         startIcon={<EditIcon />}
         variant="contained"
       >
@@ -147,7 +147,7 @@ interface Data {
   registered_changes: Date | null;
   stop_date: Date | null;
   docs?: string[];
-  change_row?: boolean;
+  change_row?: number;
 }
 
 function createData(method: MethodDTO, index: number, isPrivat: boolean): Data {
@@ -179,7 +179,7 @@ function createData(method: MethodDTO, index: number, isPrivat: boolean): Data {
           method.doc_report_review,
         ]
       : undefined,
-    change_row: isPrivat ? isPrivat : undefined,
+    change_row: isPrivat ? method.id : undefined,
   };
 }
 
@@ -205,9 +205,11 @@ export default function MethodTable() {
   };
 
   const handleSearch = React.useCallback(
-    (name: string, ids: number[]) => {
+    (name: string, ids: string) => {
       methodsFilter.page = 1;
       methodsFilter.count = 10;
+      console.log(ids);
+
       methodsFilter.ids = ids;
       methodsFilter.name = name;
       dispatch(fetchMethodsData(methodsFilter));

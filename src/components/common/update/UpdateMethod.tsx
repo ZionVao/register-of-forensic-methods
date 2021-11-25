@@ -40,6 +40,8 @@ export const UpdateMethod = (props: { id: number }) => {
   );
 
   const handleOnClickChange = () => {
+    console.log(methodData);
+
     if (Object.values(methodCheckFields).every((element) => element)) {
       const form = new FormData();
       if (!validator.isEmpty(methodData.registration_code))
@@ -48,6 +50,7 @@ export const UpdateMethod = (props: { id: number }) => {
         form.append('id_domains', methodData.id_domains.toString());
       if (!validator.isEmpty(methodData.name))
         form.append('name', methodData.name);
+
       if (methodData.year_creation !== null)
         form.append(
           'year_creation',
@@ -86,7 +89,7 @@ export const UpdateMethod = (props: { id: number }) => {
 
       form.append('author', methodData.author);
 
-      dispatch(updateMethod(1, form));
+      dispatch(updateMethod(props.id, form));
     } else {
       return;
     }

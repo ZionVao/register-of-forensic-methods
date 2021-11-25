@@ -89,7 +89,13 @@ const Routing = () => {
               path={AppRoute.CREATE_METHOD}
               component={CreateMethod}
             />
-            <Route exact path={AppRoute.METHOD} component={UpdateMethod} />
+            <Route
+              exact
+              path={AppRoute.UPDATE_METHOD}
+              render={({ match }) => (
+                <UpdateMethod id={Number(match.params.id)} />
+              )}
+            />
           </>
         )}
         <Route path={AppRoute.ANY} exact component={NotFound} />
