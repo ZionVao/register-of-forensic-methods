@@ -27,7 +27,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import * as uuid from 'uuid';
 import saveAs from 'file-saver';
 import * as path from 'path';
-import url from 'url';
 
 interface Column {
   id:
@@ -125,7 +124,7 @@ const privateColumns: Column[] = [
     format: (value: string) => (
       <Button
         color="secondary"
-        // onClick={handleClick}
+        href={AppRoute.METHOD}
         startIcon={<EditIcon />}
         variant="contained"
       >
@@ -205,6 +204,17 @@ export default function MethodTable() {
     dispatch(fetchMethodsData(methodsFilter));
   };
 
+  const handleSearch = React.useCallback(
+    (name: string, ids: number[]) => {
+      methodsFilter.page = 1;
+      methodsFilter.count = 10;
+      methodsFilter.ids = ids;
+      methodsFilter.name = name;
+      dispatch(fetchMethodsData(methodsFilter));
+    },
+    [dispatch],
+  );
+
   return (
     <Grid
       container
@@ -212,7 +222,7 @@ export default function MethodTable() {
       //   justifyContent="center"
       alignItems="center"
     >
-      {pathname === AppRoute.SEARCH && <Search />}
+      {pathname === AppRoute.SEARCH && <Search onSearch={handleSearch} />}
 
       <Paper sx={{ width: '100%' }}>
         <TableContainer>

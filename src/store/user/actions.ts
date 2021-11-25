@@ -66,7 +66,9 @@ const login =
         StorageKey.REFRESH_TOKEN,
         StorageKey.REFRESH_TOKEN,
       );
-      setTimeout(() => refreshToken()(dispatch), 6000);
+
+      // userService.setRefreshToken(
+      // refreshToken()(dispatch)
 
       dispatch(
         userActions.setUser({ user: user, role: getUserRole(user.id_role) }),

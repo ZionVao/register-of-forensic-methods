@@ -7,7 +7,6 @@ import {
   Input,
   InputLabel,
   Button,
-  Hidden,
 } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -144,20 +143,6 @@ export const CreateMethod = () => {
       return;
     }
   };
-
-  // const handleOnClickAdd = () => {
-  //   const form = new FormData();
-  //   if (docs.doc_copy_of_implementation !== null) {
-  //     form.append(
-  //       'files',
-  //       docs.doc_copy_of_implementation,
-  //       'doc_copy_of_implementation',
-  //     );
-  //   }
-  //   console.log(docs);
-
-  //   dispatch(createMethod(form));
-  // };
 
   const domains: DomainDTO[] = [];
   types.types.forEach((type) => {

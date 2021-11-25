@@ -1,4 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
+import { MethodDTO } from '../../common/dtos/method/MethodDTO';
 import { MethodFilter } from '../../services/interfaces/interfaces';
 import { methodService } from '../../services/services';
 import { uiActions } from '../ui/slice';
@@ -51,3 +52,28 @@ export const createMethod = (form: FormData) => async (dispatch: Dispatch) => {
     );
   }
 };
+
+export const updateMethod =
+  (id: number, form: FormData) => async (dispatch: Dispatch) => {
+    try {
+      const res = await methodService.updateMetod(id, form);
+      console.log(res);
+
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: 'Method updated!',
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Updating method failed!',
+        }),
+      );
+    }
+  };

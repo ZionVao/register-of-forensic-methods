@@ -9,5 +9,5 @@ export interface IMethodService {
   ): Promise<{ methods: MethodDTO[]; count: number }>;
   getMethod(id: number): Promise<MethodDTO>;
   addMethod(payload: FormData): Promise<{ id: number }>;
-  updateMetod(id: number, metod: MethodUpdateDTO): Promise<{ id: number }>;
+  updateMetod(id: number, metod: FormData): Promise<{ id: number }>;
 }

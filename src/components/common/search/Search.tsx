@@ -7,6 +7,8 @@ import { TypeDTO } from '../../../common/dtos/type/TypeDTO';
 import { loadTypes } from '../../../store/type/slice';
 import { useTypedDispatch, useTypedSelector } from '../../../store/store';
 import { fetchTypesData } from '../../../store/type/actions';
+import { MethodFilter } from '../../../services/interfaces/interfaces';
+import { check } from 'prettier';
 
 const createData = (types: TypeDTO[]): Section => {
   return types.reduce((acc: Section, obj: TypeDTO) => {
@@ -21,7 +23,9 @@ const createData = (types: TypeDTO[]): Section => {
 
 type Selected = { [x: string]: Checked };
 
-export const Search = () => {
+export const Search = (props: {
+  onSearch: (name: string, ids: number[]) => void;
+}) => {
   const types = useTypedSelector(loadTypes);
   const sections = createData(types.types);
 
@@ -33,7 +37,19 @@ export const Search = () => {
 
   const [selected, setSelected] = React.useState<Selected>({});
 
-  // console.log(Object.keys(sections));
+  const handleSearch = React.useCallback(
+    (name: string) => {
+      const ids: number[] = [];
+      Object.values(selected).forEach((el: Checked) => {
+        Object.keys(el).forEach((id: string) => {
+          if (el[id].status) ids.push(Number(id));
+        });
+      });
+      return props.onSearch(name, ids);
+    },
+    [dispatch],
+  );
+
   return (
     <>
       <Paper sx={{ margin: 'auto', flexGrow: 1, width: '100%' }}>
@@ -45,7 +61,7 @@ export const Search = () => {
             alignItems="flex-start"
             spacing={2}
           >
-            <SearchLine />
+            <SearchLine onSubmit={handleSearch} />
 
             <Stack
               direction="column"

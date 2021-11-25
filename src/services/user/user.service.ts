@@ -1,7 +1,7 @@
 import { AddressDTO } from '../../common/dtos/address/AddressDTO';
 import { UserCreateDTO } from '../../common/dtos/user/UserCreateDTO';
 import { UserDTO } from '../../common/dtos/user/UserDTO';
-import { ContentType, HttpMethod } from '../../common/enum/enums';
+import { ContentType, HttpMethod, StorageKey } from '../../common/enum/enums';
 import { IHttpService } from '../http/IHttpServise';
 import { UserFilter } from '../interfaces/interfaces';
 import { IUserService } from './IUserService';
@@ -13,6 +13,24 @@ export class UserService implements IUserService {
     this._http = http;
   }
 
+  async __refreshToken(): Promise<void> {
+    try {
+      const res = await this.token();
+      console.log(res);
+      localStorage.setItem(StorageKey.TOKEN, res.Token);
+      if (localStorage.getItem(StorageKey.TOKEN)) {
+        setTimeout(async () => {
+          if (localStorage.getItem(StorageKey.REFRESH_TOKEN)) {
+            await this.__refreshToken();
+          }
+        }, 60000);
+      }
+    } catch (error) {
+      console.log(error);
+      localStorage.clear();
+    }
+  }
+
   async login(payload: {
     email: string;
     password: string;
@@ -22,6 +40,7 @@ export class UserService implements IUserService {
       contentType: ContentType.JSON,
       payload: JSON.stringify(payload),
     });
+    this.__refreshToken();
     return { Token: res.Token };
   }
 

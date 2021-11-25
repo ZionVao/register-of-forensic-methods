@@ -8,7 +8,12 @@ import {
   Button,
 } from '@mui/material';
 
-export default function SearchLine() {
+import { useState } from 'react';
+
+export default function SearchLine(params: {
+  onSubmit: (name: string) => void;
+}) {
+  const [field, setSearchField] = useState('');
   return (
     <Box
       component="form"
@@ -32,10 +37,15 @@ export default function SearchLine() {
           id="outlined-search fullWidth"
           label="Search field"
           type="search"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setSearchField(event.target.value);
+          }}
         />
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
 
-        <Button variant="text">Пошук</Button>
+        <Button variant="text" onClick={() => params.onSubmit(field)}>
+          Пошук
+        </Button>
       </Paper>
     </Box>
   );

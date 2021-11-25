@@ -106,3 +106,9 @@ export const fetchUsersRelations = () => async (dispatch: Dispatch) => {
       );
     });
 };
+
+export const createUser = (user: FormData) => async (dispatch: Dispatch) => {
+  try {
+    // const res = await userService.cre
+  } catch (error) {}
+};

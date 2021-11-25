@@ -26,51 +26,21 @@ import MethodTable from '../common/table/MethodTable';
 import { CreateUser } from '../common/create/CreateUser';
 import UserTable from '../common/table/UserTable';
 import { TransactionTable } from '../common/table/TransactionTable';
+import { UpdateMethod } from '../common/update/UpdateMethod';
 
 const Routing = () => {
   const notification = useTypedSelector(selectNotification);
 
   const user = useTypedSelector(getUser);
 
-  // const hasToken = Boolean(storage.getItem(StorageKey.TOKEN));
-
-  // const handleUserLogout = React.useCallback(
-  //   () => dispatch(userActionCreator.logout()),
-  //   [dispatch],
-  // );
-
-  // React.useEffect(() => {
-  //   if (hasToken) {
-  //     dispatch(userActionCreator.loadCurrentUser());
-  //   }
-  // }, [hasToken, dispatch]);
-
-  // if (!hasUser && hasToken) {
-  //   return <Spinner />;
-  // }
-  // return (
-  //   <BrowserRouter>
-  //     <Routes>
-  //       <Route path="/" element={<NestedList />} />
-  //     </Routes>
-  //   </BrowserRouter>
-  // );
-
   const dispatch = useTypedDispatch();
 
   const handleClose = (event?: React.SyntheticEvent) => {
     dispatch(uiActions.clearNotification());
   };
-
-  // const handleCleanNotification = React.useCallback(() => {
-  //   console.log('d');
-  //   dispatch(cleanNotification);
-  // }, [dispatch]);
-
   const notify = () => {
     if (notification) {
       const { status, message } = notification;
-      // dispatch(uiActions.clearNotification());
 
       return (
         <Snackbar open={true} autoHideDuration={6000} onClose={handleClose}>
@@ -119,6 +89,7 @@ const Routing = () => {
               path={AppRoute.CREATE_METHOD}
               component={CreateMethod}
             />
+            <Route exact path={AppRoute.METHOD} component={UpdateMethod} />
           </>
         )}
         <Route path={AppRoute.ANY} exact component={NotFound} />

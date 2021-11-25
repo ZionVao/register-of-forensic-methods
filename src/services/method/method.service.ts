@@ -42,10 +42,7 @@ class MethodService implements IMethodService {
     });
   }
 
-  async updateMetod(
-    id: number,
-    method: MethodUpdateDTO,
-  ): Promise<{ id: number }> {
+  async updateMetod(id: number, method: FormData): Promise<{ id: number }> {
     return this._http.load(`/main/method/${id}`, {
       method: HttpMethod.PUT,
       contentType: ContentType.MULTIPART,
