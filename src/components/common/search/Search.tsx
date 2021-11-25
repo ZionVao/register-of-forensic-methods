@@ -41,10 +41,12 @@ export const Search = (props: {
     const ids: string[] = [];
     Object.values(selected).forEach((el: Checked) => {
       Object.keys(el).forEach((id: string) => {
+        console.log(id);
+
         if (el[id].status === true) ids.push(id);
       });
     });
-    console.log(ids.join(','));
+    console.log(ids.join(','), 'suka');
 
     return props.onSearch(name, ids.join(','));
   }, []);

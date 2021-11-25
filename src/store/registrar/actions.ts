@@ -4,6 +4,7 @@ import { userService } from '../../services/services';
 import { uiActions } from '../ui/slice';
 import { registrarActions } from './slice';
 import { AddressDTO } from '../../common/dtos/address/AddressDTO';
+import { UserCreateDTO } from '../../common/dtos/user/UserCreateDTO';
 
 export const fetchRegistrarsData =
   (filter: UserFilter) => (dispatch: Dispatch) => {
@@ -107,8 +108,27 @@ export const fetchUsersRelations = () => async (dispatch: Dispatch) => {
     });
 };
 
-export const createUser = (user: FormData) => async (dispatch: Dispatch) => {
-  try {
-    // const res = await userService.cre
-  } catch (error) {}
-};
+export const createUser =
+  (user: UserCreateDTO) => async (dispatch: Dispatch) => {
+    try {
+      const res = await userService.postUser(user);
+      console.log(res);
+
+      dispatch(
+        uiActions.showNotification({
+          status: 'success',
+          title: 'Success!',
+          message: 'New user created!',
+        }),
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Creating user failed!',
+        }),
+      );
+    }
+  };

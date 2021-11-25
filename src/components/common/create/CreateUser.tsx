@@ -4,57 +4,140 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import * as React from 'react';
+import {
+  createUser,
+  fetchUsersRelations,
+} from '../../../store/registrar/actions';
+import { useTypedDispatch, useTypedSelector } from '../../../store/store';
+import { loadRegistrars } from '../../../store/registrar/slice';
+import { getDateStr } from '../../../helpers/date/dayjs/dayjs';
+import { UserCreateDTO } from '../../../common/dtos/user/UserCreateDTO';
 
 const fWidth = 500;
 
-export function CreateUser() {
-  const [email, setEmail] = React.useState({ value: '', isValid: true });
-  const [fullName, setFullName] = React.useState({ value: '', isValid: true });
-  const [dateOfBirth, setDateOfBirth] = React.useState<{
-    value: Date | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [seriesPassport, setSeriesPassport] = React.useState<{
-    value: string | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [passportNumber, setPassportNumber] = React.useState({
-    value: '',
-    isValid: true,
-  });
-  const [dateOfIssueOfPassport, setDateOfIssueOfPassport] = React.useState<{
-    value: Date | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [idAuthority, setIdAuthority] = React.useState<{
-    value: number | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [iTN, setITN] = React.useState({ value: '', isValid: true });
-  const [idOrganizations, setIdOrganizations] = React.useState<{
-    value: number | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [idPosition, setIdPosition] = React.useState<{
-    value: number | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [region, setRegion] = React.useState({ value: '', isValid: true });
-  const [city, setCity] = React.useState({ value: '', isValid: true });
-  const [street, setStreet] = React.useState({ value: '', isValid: true });
-  const [houseNumber, setHouseNumber] = React.useState<{
-    value: number | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
-  const [flatNumber, setFlatNumber] = React.useState<{
-    value: number | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
+export interface IUserCreate {
+  full_name: string;
+  date_of_birth: Date | null;
+  series_passport: string;
+  date_of_issue_of_passport: Date | null;
+  id_authority_that_issued_the_passport: number | null;
+  ITN: string;
+  email: string;
+  id_role: number | null;
+  id_organizations: number | null;
+  passport_number: string;
+  id_position: number | null;
+  region: string;
+  city: string;
+  street: string;
+  house_number: number | null;
+  flat_number: number | null;
+}
 
-  const [value, setValue] = React.useState<{
-    value: Date | null;
-    isValid: Boolean;
-  }>({ value: null, isValid: true });
+const initialStateUserData: IUserCreate = {
+  full_name: '',
+  date_of_birth: null,
+  series_passport: '',
+  date_of_issue_of_passport: null,
+  id_authority_that_issued_the_passport: null,
+  ITN: '',
+  email: '',
+  id_role: null,
+  id_organizations: null,
+  passport_number: '',
+  id_position: null,
+  region: '',
+  city: '',
+  street: '',
+  house_number: null,
+  flat_number: null,
+};
+
+interface IUserCheck {
+  full_name: boolean;
+  series_passport: boolean;
+  id_authority_that_issued_the_passport: boolean;
+  ITN: boolean;
+  email: boolean;
+  id_role: boolean;
+  id_organizations: boolean;
+  passport_number: boolean;
+  id_position: boolean;
+  region: boolean;
+  city: boolean;
+  street: boolean;
+  house_number: boolean;
+}
+
+const initialCheckState: IUserCheck = {
+  full_name: true,
+  series_passport: true,
+  id_authority_that_issued_the_passport: true,
+  ITN: true,
+  email: true,
+  id_role: true,
+  id_organizations: true,
+  passport_number: true,
+  id_position: true,
+  region: true,
+  city: true,
+  street: true,
+  house_number: true,
+};
+
+export function CreateUser() {
+  const dispatch = useTypedDispatch();
+
+  const autocompleteFields = useTypedSelector(loadRegistrars);
+
+  React.useEffect(() => {
+    dispatch(fetchUsersRelations());
+  }, [dispatch]);
+
+  const [userData, setUserData] =
+    React.useState<IUserCreate>(initialStateUserData);
+  const [userCheckFields, setUserCheckFields] =
+    React.useState<IUserCheck>(initialCheckState);
+
+  const handleOnClickAdd = () => {
+    if (
+      Object.values(userData).every(
+        (element) => element === null || element === '',
+      )
+    )
+      return;
+    else if (Object.values(userCheckFields).every((element) => element)) {
+      const user: UserCreateDTO = {
+        email: userData.email,
+        full_name: userData.full_name,
+        date_of_birth:
+          userData.date_of_birth !== null
+            ? getDateStr(userData.date_of_birth)
+            : '',
+        series_passport: userData.series_passport,
+        passport_number: userData.passport_number,
+        date_of_issue_of_passport:
+          userData.date_of_issue_of_passport !== null
+            ? getDateStr(userData.date_of_issue_of_passport)
+            : '',
+        id_authority_that_issued_the_passport:
+          userData.id_authority_that_issued_the_passport === null
+            ? 0
+            : userData.id_authority_that_issued_the_passport,
+        ITN: userData.ITN,
+        id_organizations:
+          userData.id_organizations === null ? 0 : userData.id_organizations,
+        id_position: userData.id_position === null ? 0 : userData.id_position,
+        region: userData.region,
+        city: userData.city,
+        street: userData.street,
+        house_number:
+          userData.house_number === null ? 0 : userData.house_number,
+        flat_number: userData.flat_number,
+      };
+      dispatch(createUser(user));
+    }
+  };
 
   return (
     <Paper
@@ -95,9 +178,9 @@ export function CreateUser() {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Дата народження"
-              value={value}
+              value={userData.date_of_birth}
               onChange={(newValue) => {
-                // setValue(newValue);
+                setUserData({ ...userData, date_of_birth: newValue });
               }}
               renderInput={(params) => (
                 <TextField {...params} sx={{ width: fWidth }} />
@@ -127,9 +210,12 @@ export function CreateUser() {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Дата видачі паспорту"
-              value={value}
+              value={userData.date_of_issue_of_passport}
               onChange={(newValue) => {
-                // setValue(newValue);
+                setUserData({
+                  ...userData,
+                  date_of_issue_of_passport: newValue,
+                });
               }}
               renderInput={(params) => (
                 <TextField {...params} sx={{ width: fWidth }} />

@@ -29,6 +29,7 @@ import {
   ToggleButton,
 } from '@mui/material';
 import validator from 'validator';
+import { getDateStr } from '../../../helpers/date/dayjs/dayjs';
 
 const fWidth = 300;
 
@@ -37,8 +38,31 @@ const transactionFilter: TransactionFilter = {
   count: 10,
 };
 
-function PaginationSearch(props: { onSearch: () => void }) {
-  const [value, setValue] = React.useState<DateRange<Date>>([null, null]);
+interface SearchFields {
+  full_name: string;
+  email: string;
+  code: string;
+}
+
+interface CheckFields {
+  date1: string | null;
+  date2: string | null;
+  id_typeAction: number | null;
+}
+
+const initialSFields: SearchFields = {
+  full_name: '',
+  email: '',
+  code: '',
+};
+
+function PaginationSearch(props: {
+  onSearch: (searchData: SearchFields, check: CheckFields) => void;
+}) {
+  const [searchData, setSearchData] =
+    React.useState<SearchFields>(initialSFields);
+
+  const [dateValue, setDates] = React.useState<DateRange<Date>>([null, null]);
 
   const [action, setAction] = React.useState<number | null>(null);
 
@@ -49,8 +73,14 @@ function PaginationSearch(props: { onSearch: () => void }) {
     setAction(newAction);
   };
 
-  const handleClickSearch = () => {};
-
+  const handleSearch = () => {
+    const fields: CheckFields = {
+      date1: dateValue[0] === null ? null : getDateStr(dateValue[0]),
+      date2: dateValue[1] === null ? null : getDateStr(dateValue[1]),
+      id_typeAction: action === null ? null : action + 1,
+    };
+    props.onSearch(searchData, fields);
+  };
   return (
     <Box
       sx={{
@@ -75,18 +105,33 @@ function PaginationSearch(props: { onSearch: () => void }) {
             id="outlined-basic"
             label="ПІБ"
             variant="outlined"
+            value={searchData.full_name}
+            onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+              setSearchData({
+                ...searchData,
+                full_name: event.target.value.trim(),
+              })
+            }
             sx={{ width: fWidth }}
           />
           <TextField
             id="outlined-basic"
             label="Електронна пошта"
             variant="outlined"
+            value={searchData.email}
+            onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+              setSearchData({ ...searchData, email: event.target.value.trim() })
+            }
             sx={{ width: fWidth }}
           />
           <TextField
             id="outlined-basic"
             label="Реєстраційний код"
             variant="outlined"
+            value={searchData.code}
+            onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
+              setSearchData({ ...searchData, code: event.target.value.trim() })
+            }
             sx={{ width: fWidth }}
           />
         </Stack>
@@ -101,9 +146,9 @@ function PaginationSearch(props: { onSearch: () => void }) {
             <DateRangePicker
               startText="Check-in"
               endText="Check-out"
-              value={value}
+              value={dateValue}
               onChange={(newValue) => {
-                setValue(newValue);
+                setDates(newValue);
               }}
               renderInput={(startProps, endProps) => (
                 <React.Fragment>
@@ -126,7 +171,7 @@ function PaginationSearch(props: { onSearch: () => void }) {
         </Stack>
       </Grid>
       <Box textAlign="center" sx={{ p: 2 }}>
-        <Button variant="outlined" onClick={handleClickSearch}>
+        <Button variant="outlined" onClick={handleSearch}>
           Пошук
         </Button>
       </Box>
@@ -148,11 +193,28 @@ export function TransactionTable() {
     dispatch(fetchTransactionData(transactionFilter));
   }, [dispatch]);
 
+  const handleSearch = React.useCallback(
+    (searchData: SearchFields, fields: CheckFields) => {
+      transactionFilter.page = 1;
+      transactionFilter.count = 10;
+      if (!validator.isEmpty(searchData.full_name))
+        transactionFilter.full_name = searchData.full_name;
+      if (!validator.isEmpty(searchData.code))
+        transactionFilter.code = searchData.code;
+      if (!validator.isEmpty(searchData.email))
+        transactionFilter.email = searchData.email;
+      if (fields.date1 !== null) transactionFilter.date1 = fields.date1;
+      if (fields.date2 !== null) transactionFilter.date2 = fields.date2;
+      if (fields.id_typeAction !== null)
+        transactionFilter.id_typeAction = fields.id_typeAction;
+      dispatch(fetchTransactionData(transactionFilter));
+    },
+    [dispatch],
+  );
+
   return (
     <>
-      <PaginationSearch
-        onSearch={() => dispatch(fetchTransactionData(transactionFilter))}
-      />
+      <PaginationSearch onSearch={handleSearch} />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

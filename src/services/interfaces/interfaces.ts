@@ -38,8 +38,8 @@ export interface TransactionFilter {
   full_name?: string;
   email?: string;
   code?: string;
-  date1?: Date;
-  date2?: Date;
+  date1?: string;
+  date2?: string;
   id_typeAction?: number;
   page: number;
   count: number;
