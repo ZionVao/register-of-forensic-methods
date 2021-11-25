@@ -12,6 +12,7 @@ export interface Options {
   hasAuth?: boolean;
   payload?: string;
   query?: Query;
+  form?: FormData;
 }
 
 // export interface Filter {

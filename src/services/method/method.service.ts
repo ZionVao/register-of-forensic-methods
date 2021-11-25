@@ -33,10 +33,11 @@ class MethodService implements IMethodService {
     return MethodMapper.toDTO(metod);
   }
 
-  async addMethod(payload: MethodCreateDTO): Promise<{ id: number }> {
+  async addMethod(payload: FormData): Promise<{ id: number }> {
     return this._http.load('/main/method', {
       method: HttpMethod.POST,
-      payload: JSON.stringify(payload),
+      contentType: ContentType.MULTIPART,
+      form: payload,
       hasAuth: true,
     });
   }

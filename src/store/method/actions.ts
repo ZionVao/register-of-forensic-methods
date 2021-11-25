@@ -28,4 +28,26 @@ export const fetchMethodsData =
       });
   };
 
-export const createMethod = () => (dispatch: Dispatch) => {};
+export const createMethod = (form: FormData) => async (dispatch: Dispatch) => {
+  try {
+    const res = await methodService.addMethod(form);
+    console.log(res);
+
+    dispatch(
+      uiActions.showNotification({
+        status: 'success',
+        title: 'Success!',
+        message: 'New  method created!',
+      }),
+    );
+  } catch (error) {
+    console.log(error);
+    dispatch(
+      uiActions.showNotification({
+        status: 'error',
+        title: 'Error!',
+        message: 'Creating method failed!',
+      }),
+    );
+  }
+};

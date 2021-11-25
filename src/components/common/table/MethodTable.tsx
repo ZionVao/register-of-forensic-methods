@@ -25,6 +25,9 @@ import { Search } from '../search/Search';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
 import * as uuid from 'uuid';
+import saveAs from 'file-saver';
+import * as path from 'path';
+import url from 'url';
 
 interface Column {
   id:
@@ -96,12 +99,21 @@ const privateColumns: Column[] = [
   {
     id: 'docs',
     label: 'Вкладені документи',
-    format: (value: [string | null, string | null, string | null]) => (
+    format: (value: string[]) => (
       <Button
         color="info"
-        // onClick={handleClick}
         startIcon={<SaveIcon />}
         variant="contained"
+        onClick={() => {
+          value.forEach((e, ind) => {
+            fetch(e)
+              .then((res) => res.blob())
+              .then((blob) => {
+                const link = new URL(e).pathname;
+                saveAs(blob, `doc_${ind}${path.extname(link)}`);
+              });
+          });
+        }}
       >
         Save
       </Button>

@@ -4,4 +4,6 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 const getDateStr = (d: Date) => dayjs(d).format('YYYY-MM-DD');
 
-export { dayjs, getDateStr };
+const getYear = (d: Date): number => dayjs(d).year();
+
+export { dayjs, getDateStr, getYear };

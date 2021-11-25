@@ -1,10 +1,16 @@
 import { HttpError } from '../../exceptions/exceptions';
 import { getStringifiedQuery } from '../../helpers/helpers';
-import { StorageKey, HttpHeader, HttpMethod } from '../../common/enum/enums';
+import {
+  StorageKey,
+  HttpHeader,
+  HttpMethod,
+  ContentType,
+} from '../../common/enum/enums';
 import { StorageService } from '../storage/storage.service';
 import { Options, Query } from '../interfaces/interfaces';
 import { IHttpService } from './IHttpServise';
 import { config } from 'dotenv';
+import axios from 'axios';
 
 config();
 
@@ -22,23 +28,59 @@ class Http implements IHttpService {
       hasAuth = false,
       contentType,
       query,
+      form = null,
     } = options;
     const headers = this._getHeaders(hasAuth, contentType);
 
-    const request = new Request(this._getUrl(url, query), {
-      method: method,
-      headers: headers,
-      body: payload,
-    });
-    console.log('1');
+    if (contentType === ContentType.MULTIPART) {
+      console.log(form, 'form');
 
-    const a = await fetch(request);
-    // this._checkStatus(a);
-    const b = await a.json();
+      const token = this._storage.getItem(StorageKey.TOKEN);
 
-    console.log(b);
+      const a = await axios({
+        method: 'post',
+        data: form,
+        url: this._getUrl(url, query),
+        headers: {
+          'Content-Type': ContentType.MULTIPART,
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return b;
+      // const request = new Request(this._getUrl(url, query), {
+      //   method: method,
+      //   headers: headers,
+      //   body: form,
+      // });
+
+      // // request.post("http://127.0.0.1:8080/add_foo", data={'foo': 'foobar'})
+
+      // console.log('221345t6y4321', request.body);
+      // const a = await fetch(request);
+      // this._checkStatus(a);
+      // console.log(a.body);
+
+      // const b = await a.json();
+
+      // console.log(a);
+
+      return a;
+    } else {
+      const request = new Request(this._getUrl(url, query), {
+        method: method,
+        headers: headers,
+        body: payload,
+      });
+      console.log('1');
+
+      const a = await fetch(request);
+      // this._checkStatus(a);
+      const b = await a.json();
+
+      console.log(b);
+
+      return b;
+    }
 
     // return this._parseJSON(a);
     // .then(this._checkStatus)
@@ -51,6 +93,10 @@ class Http implements IHttpService {
 
     if (contentType) {
       headers.append(HttpHeader.CONTENT_TYPE, contentType);
+      // headers.append(
+      //   HttpHeader.CONTENT_TYPE,
+      //   'multipart/form-data; boundary=AaB03x;  charset=utf-8',
+      // );
     }
 
     if (hasAuth) {

@@ -18,32 +18,14 @@ export interface IMethodCheck {
   registration_code: boolean;
   name: boolean;
   author: boolean;
-
   id_domains: boolean;
-
-  year_creation: boolean;
-  year_making_changes: boolean;
-  year_termination_application: boolean;
-
-  date_of_decision_on_state_registration: boolean;
-  date_of_decision_on_state_registration_of_changes: boolean;
-  date_of_decision_to_terminate_the_application: boolean;
 }
 
 export const initialMethodCheckValid: IMethodCheck = {
   registration_code: true,
   name: true,
   author: true,
-
   id_domains: true,
-
-  year_creation: true,
-  year_making_changes: true,
-  year_termination_application: true,
-
-  date_of_decision_on_state_registration: true,
-  date_of_decision_on_state_registration_of_changes: true,
-  date_of_decision_to_terminate_the_application: true,
 };
 
 export const initialState: IMethodCreate = {

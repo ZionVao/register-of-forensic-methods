@@ -26,6 +26,8 @@ import {
   initialMethodCheckValid,
   initialState,
 } from './interfaces';
+import { getDateStr, getYear } from '../../../helpers/date/dayjs/dayjs';
+import { createMethod } from '../../../store/method/actions';
 
 export const CreateMethod = () => {
   const types = useTypedSelector(loadTypes);
@@ -44,7 +46,118 @@ export const CreateMethod = () => {
 
   const [docs, setDocs] = React.useState<IDoc>(initialDocsState);
 
-  const handleOnClickAdd = () => {};
+  const handleOnClickAdd = () => {
+    if (Object.values(docs).every((element) => element === null)) return;
+    else if (
+      Object.values(methodData).every(
+        (element) => element === null || element === '',
+      )
+    )
+      return;
+    else if (Object.values(methodCheckFields).every((element) => element)) {
+      const form = new FormData();
+      // form.
+
+      // form.append('data', methodData.registration_code, 'f');
+      // form.append('data', methodData.registration_code, 'files');
+
+      form.append('registration_code', methodData.registration_code);
+      console.log(methodData);
+      console.log(docs);
+
+      form.append(
+        'id_domains',
+        methodData.id_domains === null ? '' : methodData.id_domains.toString(),
+      );
+      form.append('name', methodData.name);
+      form.append(
+        'year_creation',
+        methodData.year_creation === null
+          ? ''
+          : getYear(methodData.year_creation).toString(),
+      );
+      if (methodData.year_making_changes !== null) {
+        form.append(
+          'year_making_changes',
+          getYear(methodData.year_making_changes).toString(),
+        );
+      }
+      if (methodData.year_termination_application !== null) {
+        form.append(
+          'year_termination_application',
+          getYear(methodData.year_termination_application).toString(),
+        );
+      }
+      form.append(
+        'date_of_decision_on_state_registration',
+        methodData.date_of_decision_on_state_registration === null
+          ? ''
+          : getDateStr(methodData.date_of_decision_on_state_registration),
+      );
+      if (
+        methodData.date_of_decision_on_state_registration_of_changes !== null
+      ) {
+        form.append(
+          'date_of_decision_on_state_registration_of_changes',
+          getDateStr(
+            methodData.date_of_decision_on_state_registration_of_changes,
+          ),
+        );
+      }
+      if (methodData.date_of_decision_to_terminate_the_application !== null) {
+        form.append(
+          'date_of_decision_to_terminate_the_application',
+          getDateStr(methodData.date_of_decision_to_terminate_the_application),
+        );
+      }
+
+      if (docs.doc_copy_of_method !== null) {
+        form.append('doc_copy_of_method', docs.doc_copy_of_method);
+      }
+
+      if (docs.doc_report_review !== null) {
+        form.append('doc_report_review', docs.doc_report_review);
+      }
+
+      if (docs.doc_certificate_of_approbation !== null) {
+        form.append(
+          'doc_certificate_of_approbation',
+          docs.doc_certificate_of_approbation,
+        );
+      }
+
+      if (docs.doc_copy_of_implementation !== null) {
+        form.append(
+          'doc_copy_of_implementation',
+          docs.doc_copy_of_implementation,
+        );
+      }
+
+      if (docs.doc_discount_card !== null) {
+        form.append('doc_discount_card', docs.doc_discount_card);
+      }
+
+      form.append('author', methodData.author);
+
+      dispatch(createMethod(form));
+    } else {
+      return;
+    }
+  };
+
+  // const handleOnClickAdd = () => {
+  //   const form = new FormData();
+  //   if (docs.doc_copy_of_implementation !== null) {
+  //     form.append(
+  //       'files',
+  //       docs.doc_copy_of_implementation,
+  //       'doc_copy_of_implementation',
+  //     );
+  //   }
+  //   console.log(docs);
+
+  //   dispatch(createMethod(form));
+  // };
 
   const domains: DomainDTO[] = [];
   types.types.forEach((type) => {
@@ -206,12 +319,6 @@ export const CreateMethod = () => {
                 label="Рік створення методики"
                 value={methodData.year_creation}
                 maxDate={new Date()}
-                onError={() =>
-                  setCheckField({
-                    ...methodCheckFields,
-                    year_creation: false,
-                  })
-                }
                 onChange={(newValue) =>
                   setMethodData({
                     ...methodData,
@@ -316,7 +423,7 @@ export const CreateMethod = () => {
                 <Input
                   id="import-button"
                   inputProps={{
-                    accept: '.png',
+                    accept: ['.png', 'jpg', '.jpeg'],
                   }}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     if (event.target.files !== null) {
@@ -337,7 +444,7 @@ export const CreateMethod = () => {
                 <Input
                   id="import-button"
                   inputProps={{
-                    accept: '.png',
+                    accept: ['.png', 'jpg', '.jpeg'],
                   }}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     if (event.target.files !== null) {
@@ -358,7 +465,7 @@ export const CreateMethod = () => {
                 <Input
                   id="import-button"
                   inputProps={{
-                    accept: '.png',
+                    accept: ['.png', 'jpg', '.jpeg'],
                   }}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     if (event.target.files !== null) {
@@ -379,7 +486,7 @@ export const CreateMethod = () => {
                 <Input
                   id="import-button"
                   inputProps={{
-                    accept: '.png',
+                    accept: ['.png', 'jpg', '.jpeg'],
                   }}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     if (event.target.files !== null) {
@@ -400,7 +507,7 @@ export const CreateMethod = () => {
                 <Input
                   id="import-button"
                   inputProps={{
-                    accept: '.png',
+                    accept: ['.png', 'jpg', '.jpeg'],
                   }}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     if (event.target.files !== null) {
