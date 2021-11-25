@@ -40,10 +40,9 @@ export const Search = (props: {
   const handleSearch = React.useCallback((name: string) => {
     const ids: string[] = [];
     Object.values(selected).forEach((el: Checked) => {
-      Object.keys(el).forEach((id: string) => {
-        console.log(id);
-
-        if (el[id].status === true) ids.push(id);
+      Object.keys(el).forEach((idType: string) => {
+        // console.log(id, 'asdas');
+        // if (el[id].status === true) ids.push(id);
       });
     });
     console.log(ids.join(','), 'suka');
