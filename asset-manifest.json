@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/register-of-forensic-methods/static/css/main.cb9b5d0c.chunk.css",
-    "main.js": "/register-of-forensic-methods/static/js/main.eafee38f.chunk.js",
-    "main.js.map": "/register-of-forensic-methods/static/js/main.eafee38f.chunk.js.map",
+    "main.js": "/register-of-forensic-methods/static/js/main.c31728dc.chunk.js",
+    "main.js.map": "/register-of-forensic-methods/static/js/main.c31728dc.chunk.js.map",
     "runtime-main.js": "/register-of-forensic-methods/static/js/runtime-main.534db919.js",
     "runtime-main.js.map": "/register-of-forensic-methods/static/js/runtime-main.534db919.js.map",
     "static/js/2.58158b6d.chunk.js": "/register-of-forensic-methods/static/js/2.58158b6d.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.534db919.js",
     "static/js/2.58158b6d.chunk.js",
     "static/css/main.cb9b5d0c.chunk.css",
-    "static/js/main.eafee38f.chunk.js"
+    "static/js/main.c31728dc.chunk.js"
   ]
 }
