@@ -4,7 +4,7 @@ import './App.css';
 // import { Provider } from 'react-redux';
 // import { BrowserRouter as Router } from 'react-router-dom';
 // import store from './store/store';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, Router } from 'react-router-dom';
 
 import { AppRoute } from '../../common/enum/enums';
 
@@ -58,48 +58,50 @@ const Routing = () => {
     <>
       <Header />
       {notice}
-      <Switch>
-        <Route
-          exact
-          path={[AppRoute.ROOT, AppRoute.SEARCH]}
-          component={MethodTable}
-        />
-        <Route exact path={AppRoute.LOGIN} component={SignPage} />
+      <Route exact path="/register-of-forensic-methods">
+        <Switch>
+          <Route
+            exact
+            path={[AppRoute.ROOT, AppRoute.SEARCH]}
+            component={MethodTable}
+          />
+          <Route exact path={AppRoute.LOGIN} component={SignPage} />
 
-        {user.role === 'admin' && (
-          <>
-            <Route
-              exact
-              path={AppRoute.CREATE_REGISTRY}
-              component={CreateUser}
-            />
-            <Route exact path={AppRoute.REGISTRY} component={UserTable} />
-            <Route
-              exact
-              path={AppRoute.TRANSACTION}
-              component={TransactionTable}
-            />
-          </>
-        )}
+          {user.role === 'admin' && (
+            <>
+              <Route
+                exact
+                path={AppRoute.CREATE_REGISTRY}
+                component={CreateUser}
+              />
+              <Route exact path={AppRoute.REGISTRY} component={UserTable} />
+              <Route
+                exact
+                path={AppRoute.TRANSACTION}
+                component={TransactionTable}
+              />
+            </>
+          )}
 
-        {user.role === 'registrator' && (
-          <>
-            <Route
-              exact
-              path={AppRoute.CREATE_METHOD}
-              component={CreateMethod}
-            />
-            <Route
-              exact
-              path={AppRoute.UPDATE_METHOD}
-              render={({ match }) => (
-                <UpdateMethod id={Number(match.params.id)} />
-              )}
-            />
-          </>
-        )}
-        <Route path={AppRoute.ANY} exact component={NotFound} />
-      </Switch>
+          {user.role === 'registrator' && (
+            <>
+              <Route
+                exact
+                path={AppRoute.CREATE_METHOD}
+                component={CreateMethod}
+              />
+              <Route
+                exact
+                path={AppRoute.UPDATE_METHOD}
+                render={({ match }) => (
+                  <UpdateMethod id={Number(match.params.id)} />
+                )}
+              />
+            </>
+          )}
+          <Route path={AppRoute.ANY} exact component={NotFound} />
+        </Switch>
+      </Route>
     </>
   );
 };
