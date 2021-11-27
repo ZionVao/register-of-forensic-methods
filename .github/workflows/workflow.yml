@@ -2,7 +2,8 @@ name: Github Pages Deploy
 on:
   push: 
     branches:
-      - "main"
+      - "master"
+
 jobs:
   build:
     run-on: ubuntu-latest
