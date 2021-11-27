@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { AppRoute } from '../../common/enum/enums';
 
@@ -54,7 +54,7 @@ const Routing = () => {
     <>
       <Header />
       {notice}
-      <Route exact path="/register-of-forensic-methods">
+      <BrowserRouter basename="/register-of-forensic-methods">
         <Switch>
           <Route
             exact
@@ -97,7 +97,7 @@ const Routing = () => {
           )}
           <Route path={AppRoute.ANY} exact component={NotFound} />
         </Switch>
-      </Route>
+      </BrowserRouter>
     </>
   );
 };
