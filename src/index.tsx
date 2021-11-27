@@ -4,15 +4,16 @@ import './index.css';
 import App from './components/app/App';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+// import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { store } from './store/store';
 
 ReactDOM.render(
   <Provider store={store}>
     {/* <BrowserRouter basename="/register-of-forensic-methods"> */}
-    <BrowserRouter>
+    <Router basename="/register-of-forensic-methods">
       <App />
-    </BrowserRouter>
+    </Router>
   </Provider>,
   document.getElementById('root'),
 );
