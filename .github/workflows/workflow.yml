@@ -3,7 +3,7 @@ name: Github Pages Deploy
 on:
   push: 
     branches:
-      - 'main'
+      - "main"
 
 jobs:
   build:
@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [v16.x]
     
    steps:
     - name: Checkout
