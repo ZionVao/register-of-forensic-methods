@@ -19,7 +19,6 @@ const menuTabs = {
 
 export default function Menu() {
   const { pathname } = useLocation();
-  const { path, url } = useRouteMatch();
 
   const getTab = (pathLink: string): number => {
     switch (pathLink) {
@@ -57,11 +56,11 @@ export default function Menu() {
         selectionFollowsFocus
       >
         {menuTabs.public.map((tab) => (
-          <Tab label={tab.name} key={tab.name} href={`${path}${tab.link}`} />
+          <Tab label={tab.name} key={tab.name} href={tab.link} />
         ))}
         {user.role === 'admin' &&
           menuTabs.admin.map((tab) => (
-            <Tab label={tab.name} key={tab.name} href={`${path}${tab.link}`} />
+            <Tab label={tab.name} key={tab.name} href={tab.link} />
           ))}
       </Tabs>
     </Box>
