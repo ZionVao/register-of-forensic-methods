@@ -60,9 +60,7 @@ const Routing = () => {
           path={[AppRoute.ROOT, AppRoute.SEARCH]}
           component={MethodTable}
         />
-        <Route exact path={AppRoute.LOGIN}>
-          <SignPage />
-        </Route>
+        <Route exact path={AppRoute.LOGIN} component={SignPage} />
 
         {user.role === 'admin' && (
           <>

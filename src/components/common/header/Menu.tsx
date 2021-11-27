@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 import { Tabs, Tab, Box } from '@mui/material';
 import { AppRoute } from '../../../common/enum/enums';
 import { useTypedSelector } from '../../../store/store';
@@ -19,9 +19,10 @@ const menuTabs = {
 
 export default function Menu() {
   const { pathname } = useLocation();
+  const { path, url } = useRouteMatch();
 
-  const getTab = (path: string): number => {
-    switch (path) {
+  const getTab = (pathLink: string): number => {
+    switch (pathLink) {
       case AppRoute.SEARCH: {
         return 1;
       }
@@ -56,11 +57,11 @@ export default function Menu() {
         selectionFollowsFocus
       >
         {menuTabs.public.map((tab) => (
-          <Tab label={tab.name} key={tab.name} href={tab.link} />
+          <Tab label={tab.name} key={tab.name} href={`${path}${tab.link}`} />
         ))}
         {user.role === 'admin' &&
           menuTabs.admin.map((tab) => (
-            <Tab label={tab.name} key={tab.name} href={tab.link} />
+            <Tab label={tab.name} key={tab.name} href={`${path}${tab.link}`} />
           ))}
       </Tabs>
     </Box>
