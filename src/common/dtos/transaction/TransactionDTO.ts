@@ -28,6 +28,9 @@ export interface TransactionDTO {
     year_making_changes: number | null;
     year_termination_application: number | null;
   } | null;
+  method: {
+    registration_code: string;
+  };
   typeAction: TypeActionDTO;
   users: UserDTO;
 }

@@ -95,7 +95,15 @@ const login =
 
 const logout = () => (dispatch: Dispatch) => {
   storageService.removeItem(StorageKey.TOKEN);
+  storageService.removeItem(StorageKey.USER);
   dispatch(userActions.setUser({ user: null, role: 'user' }));
+  dispatch(
+    uiActions.showNotification({
+      status: 'info',
+      title: 'Logout',
+      message: 'User logged out',
+    }),
+  );
 };
 
 const sendUserInfo = (id: number) => (dispatch: Dispatch) => {

@@ -45,6 +45,9 @@ export class TransactionMapper {
                 value.methodslogs.doc_copy_of_implementation,
               doc_discount_card: value.methodslogs.doc_discount_card,
             },
+      method: {
+        registration_code: value.method.registration_code,
+      },
       typeAction: { id: value.typeAction.id, name: value.typeAction.name },
       users: UserMapper.toDTO(value.users),
     };

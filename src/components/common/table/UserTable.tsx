@@ -1,31 +1,17 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { loadRegistrars } from '../../../store/registrar/slice';
-import { useTypedDispatch, useTypedSelector } from '../../../store/store';
-import { UserDTO } from '../../../common/dtos/user/UserDTO';
-import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
 import {
-  fetchRegistrarsData,
-  fetchUsersRelations,
-} from '../../../store/registrar/actions';
-import { UserFilter } from '../../../services/interfaces/interfaces';
-import { AddressDTO } from '../../../common/dtos/address/AddressDTO';
-import * as uuid from 'uuid';
-import {
+  Collapse,
+  Box,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Paper,
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -33,6 +19,23 @@ import {
   DialogTitle,
   Pagination,
 } from '@mui/material';
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
+
+import { loadRegistrars } from '../../../store/registrar/slice';
+import { useTypedDispatch, useTypedSelector } from '../../../store/store';
+import { UserDTO } from '../../../common/dtos/user/UserDTO';
+
+import {
+  fetchRegistrarsData,
+  fetchUsersRelations,
+} from '../../../store/registrar/actions';
+import { UserFilter } from '../../../services/interfaces/interfaces';
+import { AddressDTO } from '../../../common/dtos/address/AddressDTO';
+import * as uuid from 'uuid';
 import { deleteUser, sendUserInfo } from '../../../store/user/actions';
 
 function Row(props: {

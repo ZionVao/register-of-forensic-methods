@@ -77,8 +77,10 @@ function PaginationSearch(props: {
     const fields: CheckFields = {
       date1: dateValue[0] === null ? null : getDateStr(dateValue[0]),
       date2: dateValue[1] === null ? null : getDateStr(dateValue[1]),
-      id_typeAction: action === null ? null : action + 1,
+      id_typeAction: action === null ? null : action,
     };
+    console.log(searchData);
+
     props.onSearch(searchData, fields);
   };
   return (
@@ -86,6 +88,7 @@ function PaginationSearch(props: {
       sx={{
         width: '100wh',
         mx: 'auto',
+        p: 3,
       }}
     >
       <Grid
@@ -106,10 +109,18 @@ function PaginationSearch(props: {
             label="ПІБ"
             variant="outlined"
             value={searchData.full_name}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              console.log(event.target.value, 'ertyui');
+
+              setSearchData({
+                ...searchData,
+                full_name: event.target.value,
+              });
+            }}
             onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
               setSearchData({
                 ...searchData,
-                full_name: event.target.value.trim(),
+                full_name: searchData.full_name.trim(),
               })
             }
             sx={{ width: fWidth }}
@@ -119,8 +130,14 @@ function PaginationSearch(props: {
             label="Електронна пошта"
             variant="outlined"
             value={searchData.email}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchData({
+                ...searchData,
+                email: event.target.value,
+              })
+            }
             onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-              setSearchData({ ...searchData, email: event.target.value.trim() })
+              setSearchData({ ...searchData, email: searchData.email.trim() })
             }
             sx={{ width: fWidth }}
           />
@@ -129,8 +146,14 @@ function PaginationSearch(props: {
             label="Реєстраційний код"
             variant="outlined"
             value={searchData.code}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchData({
+                ...searchData,
+                code: event.target.value,
+              })
+            }
             onBlur={(event: React.FocusEvent<HTMLInputElement>) =>
-              setSearchData({ ...searchData, code: event.target.value.trim() })
+              setSearchData({ ...searchData, code: searchData.code.trim() })
             }
             sx={{ width: fWidth }}
           />
@@ -197,16 +220,21 @@ export function TransactionTable() {
     (searchData: SearchFields, fields: CheckFields) => {
       transactionFilter.page = 1;
       transactionFilter.count = 10;
-      if (!validator.isEmpty(searchData.full_name))
-        transactionFilter.full_name = searchData.full_name;
-      if (!validator.isEmpty(searchData.code))
-        transactionFilter.code = searchData.code;
-      if (!validator.isEmpty(searchData.email))
-        transactionFilter.email = searchData.email;
-      if (fields.date1 !== null) transactionFilter.date1 = fields.date1;
-      if (fields.date2 !== null) transactionFilter.date2 = fields.date2;
-      if (fields.id_typeAction !== null)
-        transactionFilter.id_typeAction = fields.id_typeAction;
+      transactionFilter.full_name = validator.isEmpty(searchData.full_name)
+        ? undefined
+        : searchData.full_name;
+      transactionFilter.code = validator.isEmpty(searchData.code)
+        ? undefined
+        : searchData.code;
+      transactionFilter.email = validator.isEmpty(searchData.email)
+        ? undefined
+        : searchData.email;
+      transactionFilter.date1 =
+        fields.date1 === null ? undefined : fields.date1;
+      transactionFilter.date2 =
+        fields.date2 === null ? undefined : fields.date2;
+      transactionFilter.id_typeAction =
+        fields.id_typeAction === null ? undefined : fields.id_typeAction;
       dispatch(fetchTransactionData(transactionFilter));
     },
     [dispatch],
@@ -243,9 +271,7 @@ export function TransactionTable() {
                 <TableCell align="right">{row.users.full_name}</TableCell>
                 <TableCell align="right">{row.typeAction.name}</TableCell>
                 <TableCell align="right">
-                  {row.methodslogs === null
-                    ? ''
-                    : row.methodslogs.registration_code}
+                  {row.method === null ? '' : row.method.registration_code}
                 </TableCell>
               </TableRow>
             ))}

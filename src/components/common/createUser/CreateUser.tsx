@@ -8,7 +8,7 @@ import {
   TextField,
 } from '@mui/material';
 
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -31,7 +31,7 @@ import {
 } from './interfaces';
 import { validationUserSchema } from './validationSchema';
 
-const fWidth = 500;
+const fWidth = 400;
 
 export function CreateUser() {
   const dispatch = useTypedDispatch();
@@ -103,6 +103,7 @@ export function CreateUser() {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(validationUserSchema) });
@@ -136,6 +137,9 @@ export function CreateUser() {
             label="ПІБ"
             variant="outlined"
             required
+            {...register('full_name')}
+            error={errors.full_name ? true : false}
+            helperText={errors.full_name?.message}
             value={userData.full_name}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -151,6 +155,9 @@ export function CreateUser() {
             label="Електронна адреса"
             variant="outlined"
             required
+            {...register('email')}
+            error={errors.email ? true : false}
+            helperText={errors.email?.message}
             value={userData.email}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -160,41 +167,74 @@ export function CreateUser() {
             }
             sx={{ width: fWidth }}
           />
-          <Autocomplete
-            disablePortal
-            id="id_organizations"
-            options={organizations}
-            sx={{ width: fWidth }}
-            getOptionLabel={(option) => option.name}
-            onChange={(
-              event: any,
-              option: { name: string; id: number } | null,
-            ) =>
-              setUserData({
-                ...userData,
-                id_organizations: option === null ? null : option.id,
-              })
-            }
-            renderInput={(params) => (
-              <TextField {...params} label="Назва державного органу" />
+          <Controller
+            name="id_organizations"
+            control={control}
+            defaultValue={[]}
+            render={({ field: { ref, ...field } }) => (
+              <Autocomplete
+                disablePortal
+                id="id_organizations"
+                options={organizations}
+                sx={{ width: fWidth }}
+                getOptionLabel={(option) => option.name}
+                onChange={(
+                  event: any,
+                  option: { name: string; id: number } | null,
+                ) => {
+                  setUserData({
+                    ...userData,
+                    id_organizations: option === null ? null : option.id,
+                  });
+                  field.onChange(option);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Назва державного органу"
+                    {...register('id_organizations')}
+                    error={errors.id_organizations ? true : false}
+                    helperText={errors.id_organizations?.message}
+                    inputRef={ref}
+                  />
+                )}
+              />
             )}
           />
-          <Autocomplete
-            disablePortal
-            id="id_position"
-            options={positions}
-            sx={{ width: fWidth }}
-            getOptionLabel={(option) => option.name}
-            onChange={(
-              event: any,
-              option: { name: string; id: number } | null,
-            ) =>
-              setUserData({
-                ...userData,
-                id_position: option === null ? null : option.id,
-              })
-            }
-            renderInput={(params) => <TextField {...params} label="Посада" />}
+
+          <Controller
+            name="id_position"
+            control={control}
+            defaultValue={[]}
+            render={({ field: { ref, ...field } }) => (
+              <Autocomplete
+                disablePortal
+                id="id_position"
+                options={positions}
+                sx={{ width: fWidth }}
+                getOptionLabel={(option) => option.name}
+                onChange={(
+                  event: any,
+                  option: { name: string; id: number } | null,
+                ) => {
+                  setUserData({
+                    ...userData,
+                    id_position: option === null ? null : option.id,
+                  });
+                  field.onChange(option);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Посада"
+                    {...register('id_position')}
+                    error={errors.id_position ? true : false}
+                    helperText={errors.id_position?.message}
+                    inputRef={ref}
+                  />
+                )}
+              />
+            )}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
@@ -258,24 +298,45 @@ export function CreateUser() {
             sx={{ width: fWidth }}
           />
 
-          <Autocomplete
-            disablePortal
-            id="id_authority_that_issued_the_passport"
-            options={authorities}
-            sx={{ width: fWidth }}
-            getOptionLabel={(option) => option.name}
-            onChange={(
-              event: any,
-              option: { name: string; id: number } | null,
-            ) =>
-              setUserData({
-                ...userData,
-                id_authority_that_issued_the_passport:
-                  option === null ? null : option.id,
-              })
-            }
-            renderInput={(params) => (
-              <TextField {...params} label="Орган, що видав паспорт" />
+          <Controller
+            name="id_authority_that_issued_the_passport"
+            control={control}
+            defaultValue={[]}
+            render={({ field: { ref, ...field } }) => (
+              <Autocomplete
+                disablePortal
+                id="id_authority_that_issued_the_passport"
+                options={positions}
+                sx={{ width: fWidth }}
+                getOptionLabel={(option) => option.name}
+                onChange={(
+                  event: any,
+                  option: { name: string; id: number } | null,
+                ) => {
+                  setUserData({
+                    ...userData,
+                    id_authority_that_issued_the_passport:
+                      option === null ? null : option.id,
+                  });
+                  field.onChange(option);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Орган, що видав паспорт"
+                    {...register('id_authority_that_issued_the_passport')}
+                    error={
+                      errors.id_authority_that_issued_the_passport
+                        ? true
+                        : false
+                    }
+                    helperText={
+                      errors.id_authority_that_issued_the_passport?.message
+                    }
+                    inputRef={ref}
+                  />
+                )}
+              />
             )}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -394,7 +455,7 @@ export function CreateUser() {
         </Stack>
       </Grid>
       <Box textAlign="center">
-        <Button variant="outlined" onClick={handleOnClickAdd}>
+        <Button variant="outlined" onClick={handleSubmit(handleOnClickAdd)}>
           Добавити
         </Button>
       </Box>
