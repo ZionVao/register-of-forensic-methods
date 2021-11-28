@@ -8,6 +8,9 @@ import {
   TextField,
 } from '@mui/material';
 
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
@@ -20,78 +23,15 @@ import { useTypedDispatch, useTypedSelector } from '../../../store/store';
 import { loadRegistrars } from '../../../store/registrar/slice';
 import { getDateStr } from '../../../helpers/date/dayjs/dayjs';
 import { UserCreateDTO } from '../../../common/dtos/user/UserCreateDTO';
+import {
+  initialCheckState,
+  initialStateUserData,
+  IUserCheck,
+  IUserCreate,
+} from './interfaces';
+import { validationUserSchema } from './validationSchema';
 
 const fWidth = 500;
-
-export interface IUserCreate {
-  full_name: string;
-  date_of_birth: Date | null;
-  series_passport: string;
-  date_of_issue_of_passport: Date | null;
-  id_authority_that_issued_the_passport: number | null;
-  ITN: string;
-  email: string;
-  id_role: number | null;
-  id_organizations: number | null;
-  passport_number: string;
-  id_position: number | null;
-  region: string;
-  city: string;
-  street: string;
-  house_number: number | null;
-  flat_number: number | null;
-}
-
-const initialStateUserData: IUserCreate = {
-  full_name: '',
-  date_of_birth: null,
-  series_passport: '',
-  date_of_issue_of_passport: null,
-  id_authority_that_issued_the_passport: null,
-  ITN: '',
-  email: '',
-  id_role: null,
-  id_organizations: null,
-  passport_number: '',
-  id_position: null,
-  region: '',
-  city: '',
-  street: '',
-  house_number: null,
-  flat_number: null,
-};
-
-interface IUserCheck {
-  full_name: boolean;
-  series_passport: boolean;
-  id_authority_that_issued_the_passport: boolean;
-  ITN: boolean;
-  email: boolean;
-  id_role: boolean;
-  id_organizations: boolean;
-  passport_number: boolean;
-  id_position: boolean;
-  region: boolean;
-  city: boolean;
-  street: boolean;
-  house_number: boolean;
-}
-
-const initialCheckState: IUserCheck = {
-  full_name: true,
-  series_passport: true,
-  id_authority_that_issued_the_passport: true,
-  ITN: true,
-  email: true,
-  id_role: true,
-  id_organizations: true,
-  passport_number: true,
-  id_position: true,
-  region: true,
-  city: true,
-  street: true,
-  house_number: true,
-};
 
 export function CreateUser() {
   const dispatch = useTypedDispatch();
@@ -104,8 +44,8 @@ export function CreateUser() {
 
   const [userData, setUserData] =
     React.useState<IUserCreate>(initialStateUserData);
-  const [userCheckFields, setUserCheckFields] =
-    React.useState<IUserCheck>(initialCheckState);
+  // const [userCheckFields, setUserCheckFields] =
+  //   React.useState<IUserCheck>(initialCheckState);
 
   const handleOnClickAdd = () => {
     if (
@@ -114,37 +54,36 @@ export function CreateUser() {
       )
     )
       return;
-    else if (Object.values(userCheckFields).every((element) => element)) {
-      const user: UserCreateDTO = {
-        email: userData.email,
-        full_name: userData.full_name,
-        date_of_birth:
-          userData.date_of_birth !== null
-            ? getDateStr(userData.date_of_birth)
-            : '',
-        series_passport: userData.series_passport,
-        passport_number: userData.passport_number,
-        date_of_issue_of_passport:
-          userData.date_of_issue_of_passport !== null
-            ? getDateStr(userData.date_of_issue_of_passport)
-            : '',
-        id_authority_that_issued_the_passport:
-          userData.id_authority_that_issued_the_passport === null
-            ? 0
-            : userData.id_authority_that_issued_the_passport,
-        ITN: userData.ITN,
-        id_organizations:
-          userData.id_organizations === null ? 0 : userData.id_organizations,
-        id_position: userData.id_position === null ? 0 : userData.id_position,
-        region: userData.region,
-        city: userData.city,
-        street: userData.street,
-        house_number:
-          userData.house_number === null ? 0 : userData.house_number,
-        flat_number: userData.flat_number,
-      };
-      dispatch(createUser(user));
-    }
+    // else if (Object.values(userCheckFields).every((element) => element)) {
+    const user: UserCreateDTO = {
+      email: userData.email,
+      full_name: userData.full_name,
+      date_of_birth:
+        userData.date_of_birth !== null
+          ? getDateStr(userData.date_of_birth)
+          : '',
+      series_passport: userData.series_passport,
+      passport_number: userData.passport_number,
+      date_of_issue_of_passport:
+        userData.date_of_issue_of_passport !== null
+          ? getDateStr(userData.date_of_issue_of_passport)
+          : '',
+      id_authority_that_issued_the_passport:
+        userData.id_authority_that_issued_the_passport === null
+          ? 0
+          : userData.id_authority_that_issued_the_passport,
+      ITN: userData.ITN,
+      id_organizations:
+        userData.id_organizations === null ? 0 : userData.id_organizations,
+      id_position: userData.id_position === null ? 0 : userData.id_position,
+      region: userData.region,
+      city: userData.city,
+      street: userData.street,
+      house_number: userData.house_number === null ? 0 : userData.house_number,
+      flat_number: userData.flat_number,
+    };
+    dispatch(createUser(user));
+    // }
   };
   const organizations = Object.keys(autocompleteFields.organizations).map(
     (e) => ({ id: Number(e), name: autocompleteFields.organizations[e].name }),
@@ -161,6 +100,12 @@ export function CreateUser() {
     id: Number(e),
     name: autocompleteFields.position[e].name,
   }));
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(validationUserSchema) });
 
   return (
     <Paper
@@ -186,9 +131,38 @@ export function CreateUser() {
           spacing={2}
           sx={{ p: 1 }}
         >
+          <TextField
+            id="full_name"
+            label="ПІБ"
+            variant="outlined"
+            required
+            value={userData.full_name}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                full_name: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />
+
+          <TextField
+            id="email"
+            label="Електронна адреса"
+            variant="outlined"
+            required
+            value={userData.email}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                email: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />
           <Autocomplete
             disablePortal
-            id="combo-box-demo"
+            id="id_organizations"
             options={organizations}
             sx={{ width: fWidth }}
             getOptionLabel={(option) => option.name}
@@ -205,19 +179,22 @@ export function CreateUser() {
               <TextField {...params} label="Назва державного органу" />
             )}
           />
-          <TextField
-            id="outlined-basic"
-            label="ПІБ"
-            variant="outlined"
-            required
-            value={userData.full_name}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          <Autocomplete
+            disablePortal
+            id="id_position"
+            options={positions}
+            sx={{ width: fWidth }}
+            getOptionLabel={(option) => option.name}
+            onChange={(
+              event: any,
+              option: { name: string; id: number } | null,
+            ) =>
               setUserData({
                 ...userData,
-                full_name: event.target.value,
+                id_position: option === null ? null : option.id,
               })
             }
-            sx={{ width: fWidth }}
+            renderInput={(params) => <TextField {...params} label="Посада" />}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
@@ -239,26 +216,51 @@ export function CreateUser() {
           spacing={2}
           sx={{ p: 1 }}
         >
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={positions}
-            sx={{ width: fWidth }}
-            getOptionLabel={(option) => option.name}
-            onChange={(
-              event: any,
-              option: { name: string; id: number } | null,
-            ) =>
+          <TextField
+            id="ITN"
+            label="Ідентифікаційний код платника податків"
+            variant="outlined"
+            required
+            value={userData.ITN}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                id_position: option === null ? null : option.id,
+                ITN: event.target.value,
               })
             }
-            renderInput={(params) => <TextField {...params} label="Посада" />}
+            sx={{ width: fWidth }}
           />
+          <TextField
+            id="passport_number"
+            label="Номер паспорту"
+            variant="outlined"
+            required
+            value={userData.passport_number}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                passport_number: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />
+          <TextField
+            id="series_passport"
+            label="Серія паспорту"
+            variant="outlined"
+            value={userData.series_passport}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUserData({
+                ...userData,
+                series_passport: event.target.value,
+              })
+            }
+            sx={{ width: fWidth }}
+          />
+
           <Autocomplete
             disablePortal
-            id="combo-box-demo"
+            id="id_authority_that_issued_the_passport"
             options={authorities}
             sx={{ width: fWidth }}
             getOptionLabel={(option) => option.name}
@@ -273,35 +275,8 @@ export function CreateUser() {
               })
             }
             renderInput={(params) => (
-              <TextField {...params} label="Назва державного органу" />
+              <TextField {...params} label="Орган, що видав паспорт" />
             )}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Номер паспорта"
-            variant="outlined"
-            required
-            value={userData.passport_number}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setUserData({
-                ...userData,
-                passport_number: event.target.value,
-              })
-            }
-            sx={{ width: fWidth }}
-          />
-          <TextField
-            id="outlined-basic"
-            label="Серія паспорта"
-            variant="outlined"
-            value={userData.series_passport}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setUserData({
-                ...userData,
-                series_passport: event.target.value,
-              })
-            }
-            sx={{ width: fWidth }}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
@@ -319,6 +294,7 @@ export function CreateUser() {
             />
           </LocalizationProvider>
         </Stack>
+
         <Stack
           direction="column"
           justifyContent="flex-start"
@@ -326,99 +302,91 @@ export function CreateUser() {
           spacing={2}
           sx={{ p: 1 }}
         >
-          {/* <TextField
-            id="outlined-basic"
-            label="Орган, що видав паспорт"
-            variant="outlined"
-            
-            sx={{ width: fWidth }}
-          /> */}
-          {/* <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={authorities}
-            sx={{ width: fWidth }}
-            getOptionLabel={(option) => option.name}
-            onChange={(
-              event: any,
-              option: { name: string; id: number } | null,
-            ) =>
-              setUserData({
-                ...userData,
-                id_authority_that_issued_the_passport:
-                  option === null ? null : option.id,
-              })
-            }
-            renderInput={(params) => (
-              <TextField {...params} label="Орган, що видав паспорт" />
-            )}
-          /> */}
           <TextField
-            id="outlined-basic"
-            label="Індифікаційний номер облікової карти платника"
+            id="region"
+            label="Область"
             variant="outlined"
             required
-            value={userData.ITN}
+            value={userData.region}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                ITN: event.target.value,
+                region: event.target.value,
               })
             }
             sx={{ width: fWidth }}
           />
           <TextField
-            id="outlined-basic"
-            label="Електронна адреса"
+            id="city"
+            label="Місто/Село"
             variant="outlined"
             required
-            value={userData.email}
+            value={userData.city}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                email: event.target.value,
+                city: event.target.value,
               })
             }
             sx={{ width: fWidth }}
           />
           <TextField
-            id="outlined-basic"
-            label="Електронна адреса"
+            id="street"
+            label="Вулиця"
             variant="outlined"
             required
-            value={userData.email}
+            value={userData.street}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                email: event.target.value,
+                street: event.target.value,
               })
             }
             sx={{ width: fWidth }}
-          />{' '}
+          />
           <TextField
-            id="outlined-basic"
-            label="Електронна адреса"
+            id="house_number"
+            label="Номер будинку"
+            type="number"
+            InputProps={{
+              inputProps: {
+                min: 1,
+                type: 'text',
+                inputmode: 'numeric',
+                pattern: '[0-9]*',
+              },
+            }}
             variant="outlined"
             required
-            value={userData.email}
+            value={userData.house_number}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                email: event.target.value,
+
+                // house_number: event.target.value,
               })
             }
             sx={{ width: fWidth }}
-          />{' '}
+          />
           <TextField
-            id="outlined-basic"
-            label="Електронна адреса"
+            id="flat_number"
+            label="Номер квартири"
             variant="outlined"
-            required
-            value={userData.email}
+            type="number"
+            InputProps={{
+              inputProps: {
+                min: 1,
+              },
+              required: true,
+            }}
+            inputProps={{
+              required: true,
+            }}
+            value={userData.flat_number}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                email: event.target.value,
+                // flat_number: event.target.value,
               })
             }
             sx={{ width: fWidth }}

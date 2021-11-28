@@ -11,7 +11,7 @@ import { store } from './store/store';
 ReactDOM.render(
   <Provider store={store}>
     {/* <BrowserRouter basename="/register-of-forensic-methods"> */}
-    <Router basename="/register-of-forensic-methods">
+    <Router>
       <App />
     </Router>
   </Provider>,

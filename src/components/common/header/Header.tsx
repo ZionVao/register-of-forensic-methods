@@ -10,9 +10,10 @@ import {
 
 import Menu from './Menu';
 import UserCard from './UserCard';
+import head from './head.png';
 
 const headerInfo = {
-  logo: 'head.png',
+  logo: head,
   title: 'МІНІСТЕРСТВО ЮСТИЦІЇ УКРАЇНИ',
   subheader: 'Реєстр методик проведення судових експертиз',
 };
