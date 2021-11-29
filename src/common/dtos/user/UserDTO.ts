@@ -12,4 +12,5 @@ export interface UserDTO {
   id_adress: number;
   id_position: number;
   passport_number: string;
+  is_activate: boolean;
 }

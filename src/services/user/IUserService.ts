@@ -21,4 +21,6 @@ export interface IUserService {
     { id: number; code: number; id_adress: number; name: string }[]
   >;
   getOrganizations(): Promise<{ id: number; name: string }[]>;
+  activateUser(id: number): Promise<{ id_user: number }>;
+  deactivateUser(id: number): Promise<{ id_user: number }>;
 }

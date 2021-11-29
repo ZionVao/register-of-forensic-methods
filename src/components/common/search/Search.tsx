@@ -39,13 +39,12 @@ export const Search = (props: {
 
   const handleSearch = React.useCallback((name: string) => {
     const ids: string[] = [];
-    Object.values(selected).forEach((el: Checked) => {
-      Object.keys(el).forEach((idType: string) => {
-        // console.log(id, 'asdas');
-        // if (el[id].status === true) ids.push(id);
-      });
+
+    Object.values(selected).forEach((el) => {
+      Object.keys(el).forEach(
+        (id: string) => el[id].status === true && ids.push(id),
+      );
     });
-    console.log(ids.join(','), 'suka');
 
     return props.onSearch(name, ids.join(','));
   }, []);
@@ -74,9 +73,8 @@ export const Search = (props: {
                   checkBoxPaiload: Checked,
                   key: number,
                 ) => {
-                  const newValue: Selected = { ...selected };
+                  const newValue: Selected = selected;
                   newValue[key] = checkBoxPaiload;
-                  console.log(newValue);
                   setSelected(newValue);
                 };
                 return (

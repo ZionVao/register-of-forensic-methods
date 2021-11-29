@@ -237,14 +237,32 @@ export function CreateUser() {
             )}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Дата народження"
-              value={userData.date_of_birth}
-              onChange={(newValue) => {
-                setUserData({ ...userData, date_of_birth: newValue });
-              }}
-              renderInput={(params) => (
-                <TextField {...params} sx={{ width: fWidth }} />
+            <Controller
+              name="date_of_birth"
+              control={control}
+              // defaultValue={}
+              // rules={rules}
+              render={({ field: { ref, ...field } }) => (
+                <DatePicker
+                  label="Дата народження"
+                  value={userData.date_of_birth}
+                  // defaultValue={null}
+
+                  // {...register('date_of_birth')}
+                  onChange={(newValue) => {
+                    setUserData({ ...userData, date_of_birth: newValue });
+                    field.onChange(newValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={errors.date_of_birth ? true : false}
+                      helperText={errors.date_of_birth?.message}
+                      // inputRef={ref}
+                      sx={{ width: fWidth }}
+                    />
+                  )}
+                />
               )}
             />
           </LocalizationProvider>

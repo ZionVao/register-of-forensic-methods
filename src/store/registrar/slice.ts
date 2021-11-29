@@ -80,6 +80,20 @@ const registorSlice = createSlice({
       state.authorities = action.payload.authorities;
       state.position = action.payload.position;
     },
+
+    setStateActivation: (
+      state,
+      action: PayloadAction<{ id: number; isActive: boolean }>,
+    ) => {
+      state.registrars = state.registrars.reduce(
+        (prev: UserDTO[], curr: UserDTO) => {
+          if (curr.id === action.payload.id)
+            return [...prev, { ...curr, is_activate: action.payload.isActive }];
+          else return [...prev, curr];
+        },
+        [],
+      );
+    },
   },
 });
 

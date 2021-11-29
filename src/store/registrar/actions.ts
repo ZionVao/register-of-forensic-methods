@@ -146,3 +146,65 @@ export const createUser =
       );
     }
   };
+
+export const activateUser = (id: number) => async (dispatch: Dispatch) => {
+  try {
+    const res = await userService.activateUser(id);
+
+    dispatch(
+      registrarActions.setStateActivation({
+        id: id,
+        isActive: true,
+      }),
+    );
+
+    dispatch(
+      uiActions.showNotification({
+        status: 'info',
+        title: 'Info',
+        message: 'Користувача активовано',
+      }),
+    );
+  } catch (error) {
+    console.log(error);
+
+    dispatch(
+      uiActions.showNotification({
+        status: 'error',
+        title: 'Error!',
+        message: 'Помилка активування користувача',
+      }),
+    );
+  }
+};
+
+export const deactivateUser = (id: number) => async (dispatch: Dispatch) => {
+  try {
+    const res = await userService.deactivateUser(id);
+
+    dispatch(
+      registrarActions.setStateActivation({
+        id: id,
+        isActive: false,
+      }),
+    );
+
+    dispatch(
+      uiActions.showNotification({
+        status: 'info',
+        title: 'Info',
+        message: 'Користувача деактивовано',
+      }),
+    );
+  } catch (error) {
+    console.log(error);
+
+    dispatch(
+      uiActions.showNotification({
+        status: 'error',
+        title: 'Error!',
+        message: 'Помилка деактивування користувача',
+      }),
+    );
+  }
+};

@@ -19,6 +19,7 @@ export class UserMapper {
       id_adress: value.id_adress,
       id_position: value.id_position,
       passport_number: value.passport_number,
+      is_activate: value.is_activate,
     };
   }
 }

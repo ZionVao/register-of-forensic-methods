@@ -24,12 +24,16 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import { loadRegistrars } from '../../../store/registrar/slice';
 import { useTypedDispatch, useTypedSelector } from '../../../store/store';
 import { UserDTO } from '../../../common/dtos/user/UserDTO';
 
 import {
+  activateUser,
+  deactivateUser,
   fetchRegistrarsData,
   fetchUsersRelations,
 } from '../../../store/registrar/actions';
@@ -61,6 +65,14 @@ function Row(props: {
 
   const handleDeleteUser = () => {
     dispatch(deleteUser(props.row.id));
+  };
+
+  const handleActivateUser = () => {
+    dispatch(activateUser(props.row.id));
+  };
+
+  const handleDeactivateUser = () => {
+    dispatch(deactivateUser(props.row.id));
   };
 
   return (
@@ -139,6 +151,29 @@ function Row(props: {
               <Button onClick={() => setOpenDialogDelete(false)}>Ні</Button>
             </DialogActions>
           </Dialog>
+        </TableCell>
+        <TableCell align="right">
+          {props.row.is_activate && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleDeactivateUser}
+              startIcon={<BlockIcon />}
+            >
+              Deactivate
+            </Button>
+          )}
+
+          {props.row.is_activate === false && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleActivateUser}
+              startIcon={<CheckCircleOutlineIcon />}
+            >
+              Activate
+            </Button>
+          )}
         </TableCell>
       </TableRow>
 
@@ -270,6 +305,7 @@ export default function UserTable() {
               <TableCell>ПІБ Реєстратора</TableCell>
               <TableCell align="right">Надіслати дані для входу</TableCell>
               <TableCell align="right">Видалити</TableCell>
+              <TableCell align="right">Встановити статус</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
