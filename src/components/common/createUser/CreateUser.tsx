@@ -71,7 +71,7 @@ export function CreateUser() {
       region: userData.region,
       city: userData.city,
       street: userData.street,
-      house_number: userData.house_number === null ? 0 : userData.house_number,
+      house_number: userData.house_number,
       flat_number: userData.flat_number,
     };
     console.log(user);
@@ -465,8 +465,7 @@ export function CreateUser() {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-
-                // house_number: event.target.value,
+                house_number: event.target.value,
               })
             }
             sx={{ width: fWidth }}
@@ -492,7 +491,9 @@ export function CreateUser() {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
                 ...userData,
-                // flat_number: event.target.value,
+                flat_number: /^\d+$/.test(event.target.value)
+                  ? Number(event.target.value)
+                  : null,
               })
             }
             sx={{ width: fWidth }}

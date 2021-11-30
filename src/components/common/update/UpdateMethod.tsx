@@ -1,7 +1,6 @@
 import {
   Paper,
   Grid,
-  Stack,
   TextField,
   Autocomplete,
   Button,
@@ -20,12 +19,7 @@ import { fetchTypesData } from '../../../store/type/actions';
 import { loadTypes } from '../../../store/type/slice';
 import { DomainDTO } from '../../../common/dtos/domain/DomainDTO';
 import validator from 'validator';
-import {
-  IMethodCheck,
-  IUpdateMethod,
-  initialMethodCheckValid,
-  initialState,
-} from './interfaces';
+import { IUpdateMethod, initialState } from './interfaces';
 import { getDateStr, getYear } from '../../../helpers/date/dayjs/dayjs';
 import { getMethodById, updateMethod } from '../../../store/method/actions';
 import { MethodDTO } from '../../../common/dtos/method/MethodDTO';
@@ -48,68 +42,62 @@ export const UpdateMethod = (props: { id: number }) => {
     dispatch(fetchTypesData());
   }, [dispatch, props.id]);
 
-  const [methodCheckFields, setCheckField] = React.useState<IMethodCheck>(
-    initialMethodCheckValid,
-  );
-
-  const handleOnClickChange = () => {
+  const handleOnClickChange = async () => {
     console.log(methodData);
 
-    if (
-      Object.values(methodCheckFields).every((element) => element) &&
-      methodData
-    ) {
-      const form = new FormData();
+    const form = new FormData();
 
-      if (!validator.isEmpty(methodData.registration_code))
-        form.append('registration_code', methodData.registration_code);
-      if (methodData.id_domains !== null)
-        form.append('id_domains', methodData.id_domains.toString());
-      if (!validator.isEmpty(methodData.name))
-        form.append('name', methodData.name);
+    if (!validator.isEmpty(methodData.registration_code))
+      form.append('registration_code', methodData.registration_code);
+    if (methodData.id_domains !== null)
+      form.append('id_domains', methodData.id_domains.toString());
+    if (!validator.isEmpty(methodData.name))
+      form.append('name', methodData.name);
 
-      if (methodData.year_creation !== null)
-        form.append(
-          'year_creation',
-          getYear(methodData.year_creation).toString(),
-        );
-      if (methodData.year_making_changes !== null) {
-        form.append(
-          'year_making_changes',
-          getYear(methodData.year_making_changes).toString(),
-        );
-      }
-      if (methodData.year_termination_application !== null)
-        form.append(
-          'year_termination_application',
-          getYear(methodData.year_termination_application).toString(),
-        );
-
-      if (methodData.date_of_decision_on_state_registration !== null)
-        form.append(
-          'date_of_decision_on_state_registration',
-          getDateStr(methodData.date_of_decision_on_state_registration),
-        );
-      if (methodData.date_of_decision_on_state_registration_of_changes !== null)
-        form.append(
-          'date_of_decision_on_state_registration_of_changes',
-          getDateStr(
-            methodData.date_of_decision_on_state_registration_of_changes,
-          ),
-        );
-
-      if (methodData.date_of_decision_to_terminate_the_application !== null)
-        form.append(
-          'date_of_decision_to_terminate_the_application',
-          getDateStr(methodData.date_of_decision_to_terminate_the_application),
-        );
-
-      form.append('author', methodData.author);
-
-      dispatch(updateMethod(props.id, form));
-    } else {
-      return;
+    if (methodData.year_creation !== null)
+      form.append(
+        'year_creation',
+        getYear(methodData.year_creation).toString(),
+      );
+    if (methodData.year_making_changes !== null) {
+      form.append(
+        'year_making_changes',
+        getYear(methodData.year_making_changes).toString(),
+      );
     }
+    if (methodData.year_termination_application !== null)
+      form.append(
+        'year_termination_application',
+        getYear(methodData.year_termination_application).toString(),
+      );
+
+    if (methodData.date_of_decision_on_state_registration !== null)
+      form.append(
+        'date_of_decision_on_state_registration',
+        getDateStr(methodData.date_of_decision_on_state_registration),
+      );
+    if (methodData.date_of_decision_on_state_registration_of_changes !== null)
+      form.append(
+        'date_of_decision_on_state_registration_of_changes',
+        getDateStr(
+          methodData.date_of_decision_on_state_registration_of_changes,
+        ),
+      );
+
+    if (methodData.date_of_decision_to_terminate_the_application !== null)
+      form.append(
+        'date_of_decision_to_terminate_the_application',
+        getDateStr(methodData.date_of_decision_to_terminate_the_application),
+      );
+
+    form.append('author', methodData.author);
+
+    dispatch(updateMethod(props.id, form));
+
+    const method = await dispatch(getMethodById(props.id));
+    console.log(method, 'dispatch');
+
+    setPrevState(method);
   };
 
   const domains: DomainDTO[] = [];
@@ -174,29 +162,12 @@ export const UpdateMethod = (props: { id: number }) => {
                       id="outlined-basic"
                       label="Реєстраційний код"
                       variant="outlined"
-                      value={methodData.registration_code}
-                      error={!methodCheckFields.registration_code}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                         setMethodData({
                           ...methodData,
                           registration_code: event.target.value,
                         })
                       }
-                      onBlur={() => {
-                        setMethodData({
-                          ...methodData,
-                          registration_code:
-                            methodData.registration_code.trim(),
-                        });
-                        setCheckField({
-                          ...methodCheckFields,
-                          registration_code:
-                            /^[0-9]+[.][0-9]+[.][0-9]+$/.test(
-                              methodData.registration_code,
-                            ) ||
-                            validator.isEmpty(methodData.registration_code),
-                        });
-                      }}
                       size="small"
                       sx={{ width: fWidth }}
                     />
@@ -231,7 +202,6 @@ export const UpdateMethod = (props: { id: number }) => {
                           {...params}
                           size="small"
                           label="Вид експертизи"
-                          error={!methodCheckFields.id_domains}
                         />
                       )}
                     />
@@ -252,12 +222,6 @@ export const UpdateMethod = (props: { id: number }) => {
                       size="small"
                       sx={{ width: fWidth }}
                       value={methodData.name}
-                      onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
-                        setMethodData({
-                          ...methodData,
-                          name: event.target.value.trim(),
-                        });
-                      }}
                       onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                         setMethodData({
                           ...methodData,
@@ -288,12 +252,6 @@ export const UpdateMethod = (props: { id: number }) => {
                           author: event.target.value,
                         })
                       }
-                      onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
-                        setMethodData({
-                          ...methodData,
-                          author: event.target.value.trim(),
-                        });
-                      }}
                     />
                   </TableCell>
                 </TableRow>

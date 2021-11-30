@@ -14,20 +14,6 @@ export interface IMethodCreate {
   author: string;
 }
 
-export interface IMethodCheck {
-  registration_code: boolean;
-  name: boolean;
-  author: boolean;
-  id_domains: boolean;
-}
-
-export const initialMethodCheckValid: IMethodCheck = {
-  registration_code: true,
-  name: true,
-  author: true,
-  id_domains: true,
-};
-
 export const initialState: IMethodCreate = {
   registration_code: '',
   name: '',

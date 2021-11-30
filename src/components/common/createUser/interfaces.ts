@@ -13,7 +13,7 @@ export interface IUserCreate {
   region: string;
   city: string;
   street: string;
-  house_number: number | null;
+  house_number: string;
   flat_number: number | null;
 }
 
@@ -32,7 +32,7 @@ export const initialStateUserData: IUserCreate = {
   region: '',
   city: '',
   street: '',
-  house_number: null,
+  house_number: '',
   flat_number: null,
 };
 

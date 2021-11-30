@@ -12,6 +12,6 @@ export interface UserCreateDTO {
   region: string;
   city: string;
   street: string;
-  house_number: number;
+  house_number: string;
   flat_number: number | null;
 }
