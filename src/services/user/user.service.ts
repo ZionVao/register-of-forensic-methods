@@ -157,14 +157,14 @@ export class UserService implements IUserService {
   }
 
   async activateUser(id: number): Promise<{ id_user: number }> {
-    return this._http.load(`/main/method/activate/${id}`, {
+    return this._http.load(`/main/user/activate/${id}`, {
       method: HttpMethod.PUT,
       hasAuth: true,
     });
   }
 
   async deactivateUser(id: number): Promise<{ id_user: number }> {
-    return this._http.load(`/main/method/deactivate/${id}`, {
+    return this._http.load(`/main/user/deactivate/${id}`, {
       method: HttpMethod.PUT,
       hasAuth: true,
     });

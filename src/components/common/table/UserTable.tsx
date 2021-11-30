@@ -166,7 +166,7 @@ function Row(props: {
 
           {props.row.is_activate === false && (
             <Button
-              variant="outlined"
+              variant="contained"
               color="secondary"
               onClick={handleActivateUser}
               startIcon={<CheckCircleOutlineIcon />}

@@ -22,8 +22,12 @@ export const validationUserSchema = yup.object().shape({
 
   series_passport: yup
     .string()
-    .length(2, 'Має бути 2 символи')
-    .matches(/^[А-Я]{2}$/, WRONG_FORMAT),
+    .nullable()
+    .notRequired()
+    .matches(/[A-Z]{2}/, {
+      excludeEmptyString: true,
+      message: WRONG_FORMAT,
+    }),
 
   date_of_issue_of_passport: yup
     .date()
@@ -53,40 +57,47 @@ export const validationUserSchema = yup.object().shape({
 
   id_authority_that_issued_the_passport: yup
     .array()
-    // .required(ERROR_REQUIRED)
     .of(
       yup.object().shape({
         name: yup.string(),
         id: yup.number(),
       }),
     )
+    .nullable()
     .length(1, ERROR_REQUIRED),
+
+  passport_number: yup
+    .string()
+    .required(ERROR_REQUIRED)
+    .length(9, 'Має бути 9 символи')
+    .matches(/[0-9]{9}/, WRONG_FORMAT),
 
   ITN: yup
     .string()
     .required(ERROR_REQUIRED)
-    .matches(/^[0-9]{10}$/, 'Має бути 10 цифр'),
+    .length(10, 'Має бути 10 символи')
+    .matches(/[0-9]{10}/, WRONG_FORMAT),
 
   id_organizations: yup
     .array()
-    // .required(ERROR_REQUIRED)
     .of(
       yup.object().shape({
         name: yup.string(),
         id: yup.number(),
       }),
     )
+    .nullable()
     .length(1, ERROR_REQUIRED),
 
   id_position: yup
     .array()
-    // .required(ERROR_REQUIRED)
     .of(
       yup.object().shape({
         name: yup.string(),
         id: yup.number(),
       }),
     )
+    .nullable()
     .length(1, ERROR_REQUIRED),
 
   region: yup.string().required(ERROR_REQUIRED),
@@ -97,5 +108,5 @@ export const validationUserSchema = yup.object().shape({
 
   house_number: yup.string().required(ERROR_REQUIRED),
 
-  flat_number: yup.number().integer().nullable(),
+  flat_number: yup.string().nullable().notRequired(),
 });

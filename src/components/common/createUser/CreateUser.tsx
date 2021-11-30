@@ -82,6 +82,8 @@ export function CreateUser() {
       house_number: userData.house_number === null ? 0 : userData.house_number,
       flat_number: userData.flat_number,
     };
+    console.log(user);
+
     dispatch(createUser(user));
     // }
   };
@@ -192,7 +194,7 @@ export function CreateUser() {
                   <TextField
                     {...params}
                     label="Назва державного органу"
-                    {...register('id_organizations')}
+                    // {...register('id_organizations')}
                     error={errors.id_organizations ? true : false}
                     helperText={errors.id_organizations?.message}
                     inputRef={ref}
@@ -279,6 +281,9 @@ export function CreateUser() {
             label="Ідентифікаційний код платника податків"
             variant="outlined"
             required
+            {...register('ITN')}
+            error={errors.ITN ? true : false}
+            helperText={errors.ITN?.message}
             value={userData.ITN}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -293,6 +298,9 @@ export function CreateUser() {
             label="Номер паспорту"
             variant="outlined"
             required
+            {...register('passport_number')}
+            error={errors.passport_number ? true : false}
+            helperText={errors.passport_number?.message}
             value={userData.passport_number}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -306,6 +314,9 @@ export function CreateUser() {
             id="series_passport"
             label="Серія паспорту"
             variant="outlined"
+            {...register('series_passport')}
+            error={errors.series_passport ? true : false}
+            helperText={errors.series_passport?.message}
             value={userData.series_passport}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -358,17 +369,29 @@ export function CreateUser() {
             )}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Дата видачі паспорту"
-              value={userData.date_of_issue_of_passport}
-              onChange={(newValue) => {
-                setUserData({
-                  ...userData,
-                  date_of_issue_of_passport: newValue,
-                });
-              }}
-              renderInput={(params) => (
-                <TextField {...params} sx={{ width: fWidth }} />
+            <Controller
+              name="date_of_issue_of_passport"
+              control={control}
+              render={({ field: { ref, ...field } }) => (
+                <DatePicker
+                  label="Дата видачі паспорту"
+                  value={userData.date_of_issue_of_passport}
+                  onChange={(newValue) => {
+                    setUserData({
+                      ...userData,
+                      date_of_issue_of_passport: newValue,
+                    });
+                    field.onChange(newValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={errors.date_of_issue_of_passport ? true : false}
+                      helperText={errors.date_of_issue_of_passport?.message}
+                      sx={{ width: fWidth }}
+                    />
+                  )}
+                />
               )}
             />
           </LocalizationProvider>
@@ -386,6 +409,9 @@ export function CreateUser() {
             label="Область"
             variant="outlined"
             required
+            {...register('region')}
+            error={errors.region ? true : false}
+            helperText={errors.region?.message}
             value={userData.region}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -400,6 +426,9 @@ export function CreateUser() {
             label="Місто/Село"
             variant="outlined"
             required
+            {...register('city')}
+            error={errors.city ? true : false}
+            helperText={errors.city?.message}
             value={userData.city}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -414,6 +443,9 @@ export function CreateUser() {
             label="Вулиця"
             variant="outlined"
             required
+            {...register('street')}
+            error={errors.street ? true : false}
+            helperText={errors.street?.message}
             value={userData.street}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -437,6 +469,9 @@ export function CreateUser() {
             }}
             variant="outlined"
             required
+            {...register('house_number')}
+            error={errors.house_number ? true : false}
+            helperText={errors.house_number?.message}
             value={userData.house_number}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setUserData({
@@ -452,6 +487,9 @@ export function CreateUser() {
             label="Номер квартири"
             variant="outlined"
             type="number"
+            {...register('flat_number')}
+            error={errors.flat_number ? true : false}
+            helperText={errors.flat_number?.message}
             InputProps={{
               inputProps: {
                 min: 1,
