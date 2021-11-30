@@ -23,12 +23,7 @@ import { useTypedDispatch, useTypedSelector } from '../../../store/store';
 import { loadRegistrars } from '../../../store/registrar/slice';
 import { getDateStr } from '../../../helpers/date/dayjs/dayjs';
 import { UserCreateDTO } from '../../../common/dtos/user/UserCreateDTO';
-import {
-  initialCheckState,
-  initialStateUserData,
-  IUserCheck,
-  IUserCreate,
-} from './interfaces';
+import { initialStateUserData, IUserCreate } from './interfaces';
 import { validationUserSchema } from './validationSchema';
 
 const fWidth = 400;
@@ -44,8 +39,6 @@ export function CreateUser() {
 
   const [userData, setUserData] =
     React.useState<IUserCreate>(initialStateUserData);
-  // const [userCheckFields, setUserCheckFields] =
-  //   React.useState<IUserCheck>(initialCheckState);
 
   const handleOnClickAdd = () => {
     if (
@@ -54,7 +47,6 @@ export function CreateUser() {
       )
     )
       return;
-    // else if (Object.values(userCheckFields).every((element) => element)) {
     const user: UserCreateDTO = {
       email: userData.email,
       full_name: userData.full_name,
@@ -85,19 +77,16 @@ export function CreateUser() {
     console.log(user);
 
     dispatch(createUser(user));
-    // }
   };
   const organizations = Object.keys(autocompleteFields.organizations).map(
     (e) => ({ id: Number(e), name: autocompleteFields.organizations[e].name }),
   );
 
-  //держ орган що видав папорт
   const authorities = Object.keys(autocompleteFields.authorities).map((e) => ({
     id: Number(e),
     name: autocompleteFields.authorities[e].name,
   }));
 
-  //посада
   const positions = Object.keys(autocompleteFields.position).map((e) => ({
     id: Number(e),
     name: autocompleteFields.position[e].name,

@@ -5,6 +5,11 @@ import {
   TextField,
   Autocomplete,
   Button,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -19,57 +24,25 @@ import {
   IMethodCheck,
   IUpdateMethod,
   initialMethodCheckValid,
+  initialState,
 } from './interfaces';
 import { getDateStr, getYear } from '../../../helpers/date/dayjs/dayjs';
 import { getMethodById, updateMethod } from '../../../store/method/actions';
+import { MethodDTO } from '../../../common/dtos/method/MethodDTO';
 
 export const UpdateMethod = (props: { id: number }) => {
   const types = useTypedSelector(loadTypes);
   const dispatch = useTypedDispatch();
-  const [methodData, setMethodData] = React.useState<IUpdateMethod>();
+  const [methodData, setMethodData] =
+    React.useState<IUpdateMethod>(initialState);
+  const [prevStateMethod, setPrevState] = React.useState<MethodDTO>();
 
   React.useEffect(() => {
     async function fetchData() {
       const method = await dispatch(getMethodById(props.id));
-      if (method) {
-        const initialState: IUpdateMethod = {
-          registration_code: method.registration_code,
-          name: method.name,
-          id_domains: null,
-          //  method.id_domaims,
+      console.log(method, 'dispatch');
 
-          year_creation: null,
-          // new Date(method.year_creation),
-          year_making_changes:
-            // method.year_making_changes
-            // ? new Date(method.year_making_changes)
-            // :
-            null,
-          year_termination_application:
-            // method.year_termination_application
-            // ? new Date(method.year_termination_application)
-            // :
-            null,
-
-          date_of_decision_on_state_registration: null,
-          //  new Date(
-          //   method.date_of_decision_on_state_registration,
-          // ),
-          date_of_decision_on_state_registration_of_changes:
-            // method.date_of_decision_on_state_registration_of_changes
-            //   ? new Date(method.date_of_decision_on_state_registration_of_changes)
-            //   :
-            null,
-          date_of_decision_to_terminate_the_application:
-            // method.date_of_decision_to_terminate_the_application
-            //   ? new Date(method.date_of_decision_to_terminate_the_application)
-            //   :
-            null,
-
-          author: method.author,
-        };
-        setMethodData(initialState);
-      }
+      setPrevState(method);
     }
     fetchData();
     dispatch(fetchTypesData());
@@ -157,8 +130,23 @@ export const UpdateMethod = (props: { id: number }) => {
     {},
   );
 
+  const domainsName = types.types.reduce(
+    (
+      acc: {
+        [id: number | string]: string;
+      },
+      obj,
+    ) => {
+      obj.domains.forEach((el) => {
+        acc[el.id] = el.name;
+      });
+      return acc;
+    },
+    {},
+  );
+
   const fWidth = 500;
-  if (methodData)
+  if (prevStateMethod)
     return (
       <Paper sx={{ margin: 'auto', flexGrow: 1, padding: 2 }}>
         <Grid
@@ -166,240 +154,339 @@ export const UpdateMethod = (props: { id: number }) => {
           direction="column"
           justifyContent="center"
           alignItems="center"
-          style={{ minHeight: '80vh' }}
+          spacing={2}
         >
-          <Grid
-            container
-            direction="row"
-            justifyContent="space-evenly"
-            alignItems="flex-start"
-            sx={{ flexGrow: 1 }}
-            spacing={2}
+          <TableContainer
+            component={Paper}
+            sx={{ minWidth: 650, maxWidth: 1000 }}
           >
-            <Stack
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              spacing={2}
-            >
-              <TextField
-                id="outlined-basic"
-                label="Реєстраційний код"
-                variant="outlined"
-                value={methodData.registration_code}
-                error={!methodCheckFields.registration_code}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setMethodData({
-                    ...methodData,
-                    registration_code: event.target.value,
-                  })
-                }
-                onBlur={() => {
-                  setMethodData({
-                    ...methodData,
-                    registration_code: methodData.registration_code.trim(),
-                  });
-                  setCheckField({
-                    ...methodCheckFields,
-                    registration_code:
-                      /^[0-9]+[.][0-9]+[.][0-9]+$/.test(
-                        methodData.registration_code,
-                      ) || validator.isEmpty(methodData.registration_code),
-                  });
-                }}
-                size="small"
-                sx={{ width: fWidth }}
-              />
-              <Autocomplete
-                id="grouped-demo"
-                options={domains.sort(
-                  (a, b) =>
-                    -b.id_types.toString().localeCompare(a.id_types.toString()),
-                )}
-                groupBy={(option) => typeNames[option.id_types]}
-                getOptionLabel={(option) => option.name}
-                onChange={(event: any, option: DomainDTO | null) =>
-                  setMethodData({
-                    ...methodData,
-                    id_domains: option === null ? null : option.id,
-                  })
-                }
-                sx={{ width: fWidth }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    size="small"
-                    label="Вид експертизи"
-                    error={!methodCheckFields.id_domains}
-                  />
-                )}
-              />
-
-              <TextField
-                id="outlined-basic"
-                label="Назва методики"
-                variant="outlined"
-                size="small"
-                sx={{ width: fWidth }}
-                value={methodData.name}
-                onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
-                  setMethodData({
-                    ...methodData,
-                    name: event.target.value.trim(),
-                  });
-                }}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setMethodData({
-                    ...methodData,
-                    name: event.target.value,
-                  })
-                }
-              />
-              <TextField
-                id="outlined-basic"
-                label="Автор"
-                variant="outlined"
-                size="small"
-                sx={{ width: fWidth }}
-                value={methodData.author}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setMethodData({
-                    ...methodData,
-                    author: event.target.value,
-                  })
-                }
-                onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
-                  setMethodData({
-                    ...methodData,
-                    author: event.target.value.trim(),
-                  });
-                }}
-              />
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  views={['year']}
-                  label="Рік створення методики"
-                  value={methodData.year_creation}
-                  maxDate={new Date()}
-                  onChange={(newValue) =>
-                    setMethodData({
-                      ...methodData,
-                      year_creation: newValue,
-                    })
-                  }
-                  renderInput={(params) => (
+            <Table aria-label="simple table">
+              <TableBody>
+                <TableRow
+                  // key={'row'}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {prevStateMethod.registration_code}
+                  </TableCell>
+                  <TableCell align="right">
                     <TextField
-                      size="small"
-                      {...params}
-                      sx={{ width: fWidth }}
-                    />
-                  )}
-                />
-                <DatePicker
-                  views={['year']}
-                  label="Рік внесення змін до методики"
-                  value={methodData.year_making_changes}
-                  onChange={(newValue) =>
-                    setMethodData({
-                      ...methodData,
-                      year_making_changes: newValue,
-                    })
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
+                      id="outlined-basic"
+                      label="Реєстраційний код"
+                      variant="outlined"
+                      value={methodData.registration_code}
+                      error={!methodCheckFields.registration_code}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        setMethodData({
+                          ...methodData,
+                          registration_code: event.target.value,
+                        })
+                      }
+                      onBlur={() => {
+                        setMethodData({
+                          ...methodData,
+                          registration_code:
+                            methodData.registration_code.trim(),
+                        });
+                        setCheckField({
+                          ...methodCheckFields,
+                          registration_code:
+                            /^[0-9]+[.][0-9]+[.][0-9]+$/.test(
+                              methodData.registration_code,
+                            ) ||
+                            validator.isEmpty(methodData.registration_code),
+                        });
+                      }}
                       size="small"
                       sx={{ width: fWidth }}
                     />
-                  )}
-                />
-                <DatePicker
-                  views={['year']}
-                  label="Рік припинення застосування методики"
-                  value={methodData.year_termination_application}
-                  onChange={(newValue) =>
-                    setMethodData({
-                      ...methodData,
-                      year_termination_application: newValue,
-                    })
-                  }
-                  renderInput={(params) => (
+                  </TableCell>
+                </TableRow>
+                <TableRow
+                  // key={'row'}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {domainsName[prevStateMethod.domainsOfMethod.id]}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Autocomplete
+                      options={domains.sort(
+                        (a, b) =>
+                          -b.id_types
+                            .toString()
+                            .localeCompare(a.id_types.toString()),
+                      )}
+                      groupBy={(option) => typeNames[option.id_types]}
+                      getOptionLabel={(option) => option.name}
+                      onChange={(event: any, option: DomainDTO | null) =>
+                        setMethodData({
+                          ...methodData,
+                          id_domains: option === null ? null : option.id,
+                        })
+                      }
+                      sx={{ width: fWidth }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          size="small"
+                          label="Вид експертизи"
+                          error={!methodCheckFields.id_domains}
+                        />
+                      )}
+                    />
+                  </TableCell>
+                </TableRow>
+                <TableRow
+                  // key={'row'}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {prevStateMethod.name}
+                  </TableCell>
+                  <TableCell align="right">
                     <TextField
-                      {...params}
+                      id="outlined-basic"
+                      label="Назва методики"
+                      variant="outlined"
                       size="small"
                       sx={{ width: fWidth }}
+                      value={methodData.name}
+                      onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
+                        setMethodData({
+                          ...methodData,
+                          name: event.target.value.trim(),
+                        });
+                      }}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        setMethodData({
+                          ...methodData,
+                          name: event.target.value,
+                        })
+                      }
                     />
-                  )}
-                />
-                <DatePicker
-                  label="Дата прийняття рішення про державну реєстрацію"
-                  value={methodData.date_of_decision_on_state_registration}
-                  onChange={(newValue) =>
-                    setMethodData({
-                      ...methodData,
-                      date_of_decision_on_state_registration: newValue,
-                    })
-                  }
-                  renderInput={(params) => (
+                  </TableCell>
+                </TableRow>
+                <TableRow
+                  // key={'row'}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {prevStateMethod.author}
+                  </TableCell>
+                  <TableCell align="right">
                     <TextField
-                      {...params}
+                      id="outlined-basic"
+                      label="Автор"
+                      variant="outlined"
                       size="small"
                       sx={{ width: fWidth }}
+                      value={methodData.author}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        setMethodData({
+                          ...methodData,
+                          author: event.target.value,
+                        })
+                      }
+                      onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
+                        setMethodData({
+                          ...methodData,
+                          author: event.target.value.trim(),
+                        });
+                      }}
                     />
-                  )}
-                />
-                <DatePicker
-                  label="Дата прийняття рішення про внесення змін у методику"
-                  value={
-                    methodData.date_of_decision_on_state_registration_of_changes
-                  }
-                  onChange={(newValue) =>
-                    setMethodData({
-                      ...methodData,
-                      date_of_decision_on_state_registration_of_changes:
-                        newValue,
-                    })
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      size="small"
-                      sx={{ width: fWidth }}
-                    />
-                  )}
-                />
-                <DatePicker
-                  label="Дата прийняття рішення про припинення застосування методики"
-                  value={
-                    methodData.date_of_decision_to_terminate_the_application
-                  }
-                  onChange={(newValue) =>
-                    setMethodData({
-                      ...methodData,
-                      date_of_decision_to_terminate_the_application: newValue,
-                    })
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      size="small"
-                      sx={{ width: fWidth }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            </Stack>
-            <Stack
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              spacing={2}
-            >
-              <Button variant="contained" onClick={handleOnClickChange}>
-                Оновити
-              </Button>
-            </Stack>
-          </Grid>
+                  </TableCell>
+                </TableRow>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <TableRow
+                    // key={'row'}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {prevStateMethod.year_creation}
+                    </TableCell>
+                    <TableCell align="right">
+                      <DatePicker
+                        views={['year']}
+                        label="Рік створення методики"
+                        value={methodData.year_creation}
+                        maxDate={new Date()}
+                        onChange={(newValue) =>
+                          setMethodData({
+                            ...methodData,
+                            year_creation: newValue,
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            size="small"
+                            {...params}
+                            sx={{ width: fWidth }}
+                          />
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow
+                    // key={'row'}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {prevStateMethod.year_making_changes}
+                    </TableCell>
+                    <TableCell align="right">
+                      <DatePicker
+                        views={['year']}
+                        label="Рік внесення змін до методики"
+                        value={methodData.year_making_changes}
+                        onChange={(newValue) =>
+                          setMethodData({
+                            ...methodData,
+                            year_making_changes: newValue,
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            sx={{ width: fWidth }}
+                          />
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow
+                    // key={'row'}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {prevStateMethod.year_termination_application}
+                    </TableCell>
+                    <TableCell align="right">
+                      <DatePicker
+                        views={['year']}
+                        label="Рік припинення застосування методики"
+                        value={methodData.year_termination_application}
+                        onChange={(newValue) =>
+                          setMethodData({
+                            ...methodData,
+                            year_termination_application: newValue,
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            sx={{ width: fWidth }}
+                          />
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow
+                    // key={'row'}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {prevStateMethod.date_of_decision_on_state_registration}
+                    </TableCell>
+                    <TableCell align="right">
+                      <DatePicker
+                        label="Дата прийняття рішення про державну реєстрацію"
+                        value={
+                          methodData.date_of_decision_on_state_registration
+                        }
+                        onChange={(newValue) =>
+                          setMethodData({
+                            ...methodData,
+                            date_of_decision_on_state_registration: newValue,
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            sx={{ width: fWidth }}
+                          />
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow
+                    // key={'row'}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {
+                        prevStateMethod.date_of_decision_on_state_registration_of_changes
+                      }
+                    </TableCell>
+                    <TableCell align="right">
+                      <DatePicker
+                        label="Дата прийняття рішення про внесення змін у методику"
+                        value={
+                          methodData.date_of_decision_on_state_registration_of_changes
+                        }
+                        onChange={(newValue) =>
+                          setMethodData({
+                            ...methodData,
+                            date_of_decision_on_state_registration_of_changes:
+                              newValue,
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            sx={{ width: fWidth }}
+                          />
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow
+                    // key={'row'}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {
+                        prevStateMethod.date_of_decision_to_terminate_the_application
+                      }
+                    </TableCell>
+                    <TableCell align="right">
+                      <DatePicker
+                        label="Дата прийняття рішення про припинення застосування методики"
+                        value={
+                          methodData.date_of_decision_to_terminate_the_application
+                        }
+                        onChange={(newValue) =>
+                          setMethodData({
+                            ...methodData,
+                            date_of_decision_to_terminate_the_application:
+                              newValue,
+                          })
+                        }
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            size="small"
+                            sx={{ width: fWidth }}
+                          />
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </LocalizationProvider>
+              </TableBody>
+            </Table>
+            <TableRow>
+              <TableCell align="center">
+                <Button variant="contained" onClick={handleOnClickChange}>
+                  Оновити
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableContainer>
         </Grid>
       </Paper>
     );

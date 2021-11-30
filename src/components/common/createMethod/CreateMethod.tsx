@@ -27,6 +27,10 @@ import {
 } from './interfaces';
 import { getDateStr, getYear } from '../../../helpers/date/dayjs/dayjs';
 import { createMethod } from '../../../store/method/actions';
+import { validationSchema } from './validationSchema';
+
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 export const CreateMethod = () => {
   const types = useTypedSelector(loadTypes);
@@ -161,6 +165,13 @@ export const CreateMethod = () => {
     },
     {},
   );
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(validationSchema) });
 
   const fWidth = 500;
   return (

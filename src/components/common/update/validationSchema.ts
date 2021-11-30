@@ -1,15 +1,14 @@
 import * as yup from 'yup';
 
-const ERROR_REQUIRED = 'Поле обов’язкове';
 const WRONG_FORMAT = 'Неправильний формат';
 
 export const validationSchema = yup.object().shape({
   registration_code: yup
     .string()
-    .required(ERROR_REQUIRED)
-    .matches(/[0-9]+[.][0-9]+[.][0-9]+/, WRONG_FORMAT),
+    .nullable()
+    .matches(/^[0-9]+[.][0-9]+[.][0-9]+$/, WRONG_FORMAT),
 
-  name: yup.string().required(ERROR_REQUIRED),
+  name: yup.string(),
 
   id_domains: yup
     .array()
@@ -19,11 +18,9 @@ export const validationSchema = yup.object().shape({
         id: yup.number(),
       }),
     )
-    .nullable()
-    .length(1, ERROR_REQUIRED),
+    .nullable(),
 
-  year_creation: yup.date().required(ERROR_REQUIRED),
-
+  year_creation: yup.date(),
   year_making_changes: yup
     .date()
     .nullable()
@@ -46,8 +43,7 @@ export const validationSchema = yup.object().shape({
         yup.min(year_creation, 'Дата не може бути меншою за дату створення'),
     ),
 
-  date_of_decision_on_state_registration: yup.date().required(ERROR_REQUIRED),
-
+  date_of_decision_on_state_registration: yup.date(),
   date_of_decision_on_state_registration_of_changes: yup
     .date()
     .nullable()
@@ -76,13 +72,5 @@ export const validationSchema = yup.object().shape({
         ),
     ),
 
-  doc_copy_of_method: yup.mixed().required(ERROR_REQUIRED),
-  doc_report_review: yup.mixed().required(ERROR_REQUIRED),
-
-  doc_certificate_of_approbation: yup.mixed().required(ERROR_REQUIRED),
-  doc_copy_of_implementation: yup.mixed().required(ERROR_REQUIRED),
-
-  doc_discount_card: yup.mixed().required(ERROR_REQUIRED),
-
-  author: yup.string().required(ERROR_REQUIRED),
+  author: yup.string(),
 });
