@@ -34,6 +34,7 @@ const Routing = () => {
   const handleClose = (event?: React.SyntheticEvent) => {
     dispatch(uiActions.clearNotification());
   };
+
   const notify = () => {
     if (notification) {
       const { status, message } = notification;

@@ -40,7 +40,7 @@ export const createMethod = (form: FormData) => async (dispatch: Dispatch) => {
       uiActions.showNotification({
         status: 'success',
         title: 'Success!',
-        message: 'New  method created!',
+        message: 'New method created!',
       }),
     );
   } catch (error) {
@@ -75,6 +75,24 @@ export const updateMethod =
           status: 'error',
           title: 'Error!',
           message: 'Updating method failed!',
+        }),
+      );
+    }
+  };
+
+export const getMethodById =
+  (id: number) =>
+  async (dispatch: Dispatch): Promise<MethodDTO | undefined> => {
+    try {
+      const res = await methodService.getMethod(id);
+      return res;
+    } catch (error) {
+      console.log(error);
+      dispatch(
+        uiActions.showNotification({
+          status: 'error',
+          title: 'Error!',
+          message: 'Fetching method data failed!',
         }),
       );
     }
